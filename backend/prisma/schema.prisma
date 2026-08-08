@@ -22,6 +22,7 @@ model Image {
   watermarkBorder      Int?
   createdAt            DateTime @default(now())
   watermark            Watermark? @relation(fields: [watermarkId], references: [id], onDelete: SetNull)
+  redactions           ImageRedaction[]
 }
 
 model Watermark {
@@ -30,4 +31,29 @@ model Watermark {
   filePath  String
   createdAt DateTime @default(now())
   images    Image[]
+}
+
+model ImageRedaction {
+  id         Int      @id @default(autoincrement())
+  imageId     Int
+  tool        String
+  sortOrder   Int
+  x           Float?
+  y           Float?
+  width       Float?
+  height      Float?
+  rotation    Float?
+  brushSize   Float?
+  blur        Int
+  image       Image     @relation(fields: [imageId], references: [id], onDelete: Cascade)
+  points      ImageRedactionPoint[]
+}
+
+model ImageRedactionPoint {
+  id           Int      @id @default(autoincrement())
+  redactionId  Int
+  sortOrder    Int
+  x            Float
+  y            Float
+  redaction    ImageRedaction @relation(fields: [redactionId], references: [id], onDelete: Cascade)
 }

@@ -17,9 +17,38 @@ export interface WatermarkMetadata {
   border?: number;
 }
 
+export type RedactionTool = 'rectangle' | 'brush';
+
+export interface RedactionPoint {
+  x: number;
+  y: number;
+}
+
+export interface RectangleRedaction {
+  id: string;
+  tool: 'rectangle';
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  rotation: number;
+  blur: number;
+}
+
+export interface BrushRedaction {
+  id: string;
+  tool: 'brush';
+  size: number;
+  blur: number;
+  points: RedactionPoint[];
+}
+
+export type Redaction = RectangleRedaction | BrushRedaction;
+
 export interface ImageEditMetadata {
   crop?: CropMetadata;
   aspectRatio?: AspectRatio;
+  redactions?: Redaction[];
   watermark?: WatermarkMetadata;
 }
 

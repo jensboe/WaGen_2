@@ -13,7 +13,7 @@ import type { SaveEditedImageEvent } from '@shared/image.types';
     <section class="page-shell">
       <header>
         <h2>Edit Existing Image</h2>
-        <p>Crop and place a watermark on an already uploaded image.</p>
+        <p>Crop the image, blur sensitive areas, and place a watermark on an already uploaded image.</p>
       </header>
 
       <ng-container *ngIf="image; else noImage">

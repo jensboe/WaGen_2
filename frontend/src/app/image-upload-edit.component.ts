@@ -14,7 +14,7 @@ import type { SaveEditedImageEvent } from '@shared/image.types';
     <section class="page-shell">
       <header>
         <h2>Upload a New Image</h2>
-        <p>Select an image file and crop or watermark it before saving.</p>
+        <p>Select an image file, crop it, blur sensitive areas, and add a watermark before saving.</p>
       </header>
 
       <div class="file-selection" *ngIf="!selectedFile">

@@ -3,12 +3,19 @@ import express, { Request } from 'express';
 import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
-import { Prisma, PrismaClient, Watermark } from '@prisma/client';
+import { ImageRedaction, Prisma, PrismaClient, Watermark } from '@prisma/client';
 import { PORT, UPLOAD_DIR } from './config';
-import type { AspectRatio, ImageEditMetadata, ImageResponse, WatermarkPosition, WatermarkResponse } from '@shared/image.types';
+import type { AspectRatio, BrushRedaction, ImageEditMetadata, ImageResponse, RectangleRedaction, Redaction, WatermarkPosition, WatermarkResponse } from '@shared/image.types';
 
 type MulterRequest = Request & { file?: Express.Multer.File };
-type ImageWithWatermark = Prisma.ImageGetPayload<{ include: { watermark: true } }>;
+type ImageWithRelations = Prisma.ImageGetPayload<{
+  include: {
+    watermark: true;
+    redactions: {
+      include: { points: true };
+    };
+  };
+}>;
 
 const prisma = new PrismaClient();
 const app = express();
@@ -147,7 +154,13 @@ function publicUrlFromRequest(req: express.Request, filePath: string) {
 
 app.get('/images', async (req, res) => {
   const images = await prisma.image.findMany({
-    include: { watermark: true },
+    include: {
+      watermark: true,
+      redactions: {
+        orderBy: { sortOrder: 'asc' },
+        include: { points: { orderBy: { sortOrder: 'asc' } } }
+      }
+    },
     orderBy: { createdAt: 'desc' }
   });
   res.json(images.map((image) => buildImageResponse(req, image)));
@@ -157,7 +170,13 @@ app.get('/images/:id', async (req, res) => {
   const id = parseInt(req.params.id, 10);
   const img = await prisma.image.findUnique({
     where: { id },
-    include: { watermark: true }
+    include: {
+      watermark: true,
+      redactions: {
+        orderBy: { sortOrder: 'asc' },
+        include: { points: { orderBy: { sortOrder: 'asc' } } }
+      }
+    }
   });
   if (!img) return res.status(404).json({ error: 'Not found' });
   res.json(buildImageResponse(req, img));
@@ -184,11 +203,15 @@ function buildImageUpdateData(finalPath: string, metadata: ImageEditMetadata | n
     watermarkId: metadata?.watermark?.id ?? null,
     watermarkPosition: metadata?.watermark?.position ?? null,
     watermarkProportion: metadata?.watermark?.proportion != null ? Math.round(metadata.watermark.proportion) : null,
-    watermarkBorder: metadata?.watermark?.border != null ? Math.round(metadata.watermark.border) : null
+    watermarkBorder: metadata?.watermark?.border != null ? Math.round(metadata.watermark.border) : null,
+    redactions: {
+      deleteMany: {},
+      create: buildRedactionCreateInputs(metadata?.redactions ?? [])
+    }
   };
 }
 
-function buildImageMetadata(req: express.Request, image: ImageWithWatermark): ImageEditMetadata | null {
+function buildImageMetadata(req: express.Request, image: ImageWithRelations): ImageEditMetadata | null {
   const hasCrop =
     image.cropX != null &&
     image.cropY != null &&
@@ -199,8 +222,9 @@ function buildImageMetadata(req: express.Request, image: ImageWithWatermark): Im
     image.watermarkPosition != null ||
     image.watermarkProportion != null ||
     image.watermarkBorder != null;
+  const hasRedactions = image.redactions.length > 0;
 
-  if (!hasCrop && !image.aspectRatio && !hasWatermark) {
+  if (!hasCrop && !image.aspectRatio && !hasWatermark && !hasRedactions) {
     return null;
   }
 
@@ -214,6 +238,7 @@ function buildImageMetadata(req: express.Request, image: ImageWithWatermark): Im
         }
       : undefined,
     aspectRatio: normalizeAspectRatio(image.aspectRatio),
+    redactions: hasRedactions ? image.redactions.map(buildRedactionMetadata) : undefined,
     watermark: hasWatermark
       ? {
           id: image.watermarkId ?? undefined,
@@ -224,6 +249,56 @@ function buildImageMetadata(req: express.Request, image: ImageWithWatermark): Im
         }
       : undefined
   };
+}
+
+function buildRedactionCreateInputs(redactions: Redaction[]) {
+  return redactions.map((redaction, index) => ({
+    tool: redaction.tool,
+    sortOrder: index,
+    x: redaction.tool === 'rectangle' ? redaction.x : null,
+    y: redaction.tool === 'rectangle' ? redaction.y : null,
+    width: redaction.tool === 'rectangle' ? redaction.width : null,
+    height: redaction.tool === 'rectangle' ? redaction.height : null,
+    rotation: redaction.tool === 'rectangle' ? redaction.rotation : null,
+    brushSize: redaction.tool === 'brush' ? redaction.size : null,
+    blur: Math.round(redaction.blur),
+    points: redaction.tool === 'brush'
+      ? {
+          create: redaction.points.map((point, pointIndex) => ({
+            sortOrder: pointIndex,
+            x: point.x,
+            y: point.y
+          }))
+        }
+      : undefined
+  }));
+}
+
+function buildRedactionMetadata(redaction: ImageRedaction & { points: Array<{ x: number; y: number; sortOrder: number }> }): Redaction {
+  if (redaction.tool === 'brush') {
+    const brush: BrushRedaction = {
+      id: `brush-${redaction.id}`,
+      tool: 'brush',
+      size: redaction.brushSize ?? 24,
+      blur: redaction.blur,
+      points: redaction.points
+        .sort((a, b) => a.sortOrder - b.sortOrder)
+        .map((point) => ({ x: point.x, y: point.y }))
+    };
+    return brush;
+  }
+
+  const rectangle: RectangleRedaction = {
+    id: `rectangle-${redaction.id}`,
+    tool: 'rectangle',
+    x: redaction.x ?? 0,
+    y: redaction.y ?? 0,
+    width: redaction.width ?? 0,
+    height: redaction.height ?? 0,
+    rotation: redaction.rotation ?? 0,
+    blur: redaction.blur
+  };
+  return rectangle;
 }
 
 function normalizeAspectRatio(value: string | null): AspectRatio | undefined {
@@ -249,7 +324,7 @@ function buildWatermarkResponse(req: express.Request, watermark: Watermark): Wat
   };
 }
 
-function buildImageResponse(req: express.Request, image: ImageWithWatermark): ImageResponse {
+function buildImageResponse(req: express.Request, image: ImageWithRelations): ImageResponse {
   return {
     id: image.id,
     metadata: buildImageMetadata(req, image),
