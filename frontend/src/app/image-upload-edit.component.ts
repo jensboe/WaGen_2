@@ -1,11 +1,13 @@
 import { Component } from '@angular/core';
+import { Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { FormsModule } from '@angular/forms';
+import { ImageService } from './image.service';
 
 @Component({
   selector: 'app-image-upload-edit',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink],
   template: `
     <section class="page-shell">
       <header>
@@ -13,15 +15,15 @@ import { RouterLink } from '@angular/router';
         <p>Choose a file and add image details before saving.</p>
       </header>
 
-      <form class="image-form">
+      <form class="image-form" (ngSubmit)="uploadImage()">
         <label>
           Image title
-          <input type="text" placeholder="Enter a title" />
+          <input type="text" [(ngModel)]="title" name="title" placeholder="Enter a title" />
         </label>
 
         <label>
           Image description
-          <textarea placeholder="Describe the image"></textarea>
+          <textarea [(ngModel)]="description" name="description" placeholder="Describe the image"></textarea>
         </label>
 
         <label class="file-picker">
@@ -34,8 +36,11 @@ import { RouterLink } from '@angular/router';
           <p><strong>Size:</strong> {{ selectedFile.size | number }} bytes</p>
         </div>
 
+        <p *ngIf="errorMessage" class="error">{{ errorMessage }}</p>
+        <p *ngIf="successMessage" class="success">{{ successMessage }}</p>
+
         <div class="actions">
-          <button type="button">Save image</button>
+          <button type="submit" [disabled]="!selectedFile || uploading">Save image</button>
           <a routerLink="/images">Cancel</a>
         </div>
       </form>
@@ -55,15 +60,44 @@ import { RouterLink } from '@angular/router';
     ".preview { padding: 1rem; border: 1px solid #d1d5db; border-radius: 0.75rem; background: #fff; }",
     ".actions { display: flex; gap: 1rem; align-items: center; margin-top: 0.5rem; }",
     ".actions button { padding: 0.85rem 1.2rem; border: none; border-radius: 0.75rem; background: #2563eb; color: white; font-weight: 700; cursor: pointer; }",
-    ".actions a { color: #2563eb; text-decoration: none; font-weight: 700; }"
+    ".actions a { color: #2563eb; text-decoration: none; font-weight: 700; }",
+    ".error { color: #b91c1c; }",
+    ".success { color: #047857; }"
   ]
 })
 export class ImageUploadEditComponent {
+  title = '';
+  description = '';
   selectedFile: File | null = null;
+  uploading = false;
+  errorMessage = '';
+  successMessage = '';
+
+  constructor(private imageService: ImageService, private router: Router) {}
 
   onFileSelected(event: Event) {
     const input = event.target as HTMLInputElement;
     const file = input.files?.item(0) ?? null;
     this.selectedFile = file;
+  }
+
+  uploadImage() {
+    if (!this.selectedFile) {
+      this.errorMessage = 'Please choose an image file before saving.';
+      return;
+    }
+    this.errorMessage = '';
+    this.uploading = true;
+    this.imageService.uploadImage(this.selectedFile, this.title, this.description).subscribe({
+      next: () => {
+        this.uploading = false;
+        this.successMessage = 'Image uploaded successfully.';
+        this.router.navigate(['/images']);
+      },
+      error: () => {
+        this.uploading = false;
+        this.errorMessage = 'Upload failed. Please try again.';
+      }
+    });
   }
 }

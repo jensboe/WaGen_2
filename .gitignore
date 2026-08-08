@@ -2,12 +2,13 @@
 /frontend/node_modules/
 dist/
 .env
+/backend/.env
 /backend/data/
+/backend/prisma/dev.db
 .npm/
 .idea/
 
 # Ignore tool attachment artifacts
 /.ai/
-
 # test image without proper license to publish
 tests/images/*

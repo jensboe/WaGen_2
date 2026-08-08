@@ -1,12 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
-
-interface ImageItem {
-  id: number;
-  title: string;
-  description: string;
-}
+import { ImageService, ImageItem } from './image.service';
 
 @Component({
   selector: 'app-image-list',
@@ -19,18 +14,25 @@ interface ImageItem {
         <p>Browse uploaded images and open them for editing.</p>
       </header>
 
-      <div class="image-list">
+      <div *ngIf="images.length; else emptyState" class="image-list">
         <article *ngFor="let image of images" class="image-card">
           <div>
-            <strong>{{ image.title }}</strong>
-            <p>{{ image.description }}</p>
+            <strong>{{ image.title || 'Untitled image' }}</strong>
+            <p>{{ image.description || 'No description provided.' }}</p>
+            <p *ngIf="image.originalUrl">ID: {{ image.id }}</p>
           </div>
           <a [routerLink]="['/images', image.id, 'edit']">Edit</a>
         </article>
       </div>
 
+      <ng-template #emptyState>
+        <div class="empty-state">
+          <p>No images available yet. Upload a new image to get started.</p>
+        </div>
+      </ng-template>
+
       <div class="actions">
-        <a routerLink="/images/new" class="button">Upload new image</a>
+        <a routerLink="/upload" class="button">Upload new image</a>
       </div>
     </section>
   `,
@@ -46,13 +48,21 @@ interface ImageItem {
     ".image-card a { color: #2563eb; text-decoration: none; font-weight: 700; }",
     ".image-card a:hover { text-decoration: underline; }",
     ".actions { margin-top: 1.5rem; }",
-    ".button { display: inline-block; padding: 0.85rem 1.1rem; background: #2563eb; color: #fff; border-radius: 0.75rem; text-decoration: none; font-weight: 700; }"
+    ".button { display: inline-block; padding: 0.85rem 1.1rem; background: #2563eb; color: #fff; border-radius: 0.75rem; text-decoration: none; font-weight: 700; }",
+    ".empty-state { padding: 1.5rem; border: 1px dashed #cbd5e1; border-radius: 0.75rem; color: #475569; background: #f8fafc; }"
   ]
 })
-export class ImageListComponent {
-  images: ImageItem[] = [
-    { id: 1, title: 'Sunset Highway', description: 'A vibrant road trip scene with warm colors.' },
-    { id: 2, title: 'Coastal Campsite', description: 'Beachside camping under a starry sky.' },
-    { id: 3, title: 'Mountain Van', description: 'A camper van parked near alpine scenery.' }
-  ];
+export class ImageListComponent implements OnInit {
+  images: ImageItem[] = [];
+
+  constructor(private imageService: ImageService) {}
+
+  ngOnInit() {
+    this.imageService.getImages().subscribe({
+      next: (images) => (this.images = images),
+      error: () => {
+        this.images = [];
+      }
+    });
+  }
 }

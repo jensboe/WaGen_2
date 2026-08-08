@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
@@ -11,6 +11,8 @@ model Image {
   id           Int      @id @default(autoincrement())
   originalPath String
   finalPath    String?
-  metadata     Json?
+  title        String?
+  description  String?
+  metadata     String?
   createdAt    DateTime @default(now())
 }
