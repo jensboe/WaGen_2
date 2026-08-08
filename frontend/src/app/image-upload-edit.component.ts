@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { MatTabsModule } from '@angular/material/tabs';
 import { ImageEditorComponent } from './image-editor.component';
 import { ImageService } from './image.service';
 import type { SaveEditedImageEvent } from '@shared/image.types';
@@ -9,7 +10,7 @@ import type { SaveEditedImageEvent } from '@shared/image.types';
 @Component({
   selector: 'app-image-upload-edit',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, ImageEditorComponent],
+  imports: [CommonModule, FormsModule, RouterLink, ImageEditorComponent, MatTabsModule],
   template: `
     <section class="page-shell">
       <header>
@@ -17,15 +18,26 @@ import type { SaveEditedImageEvent } from '@shared/image.types';
         <p>Select an image file, crop it, blur sensitive areas, and add a watermark before saving.</p>
       </header>
 
-      <div class="file-selection" *ngIf="!selectedFile">
+      <mat-tab-group [selectedIndex]="selectedTabIndex" (selectedIndexChange)="onTabChange($event)">
+        <mat-tab label="Upload"></mat-tab>
+        <mat-tab label="Crop" [disabled]="!selectedFile"></mat-tab>
+        <mat-tab label="Blur areas" [disabled]="!selectedFile"></mat-tab>
+      </mat-tab-group>
+
+      <div class="file-selection" *ngIf="selectedTabIndex === 0">
         <label class="file-picker">
           <span>Select image</span>
           <input type="file" accept="image/*" (change)="onFileSelected($event)" />
         </label>
       </div>
 
-      <div *ngIf="selectedFile">
-        <app-image-editor [sourceFile]="selectedFile" (save)="handleSave($event)"></app-image-editor>
+      <div *ngIf="selectedFile && selectedTabIndex > 0">
+        <app-image-editor
+          [sourceFile]="selectedFile"
+          [showStepTabs]="false"
+          [externalStep]="selectedTabIndex === 1 ? 'crop' : 'redact'"
+          (save)="handleSave($event)">
+        </app-image-editor>
       </div>
 
       <p *ngIf="errorMessage" class="error">{{ errorMessage }}</p>
@@ -58,6 +70,7 @@ import type { SaveEditedImageEvent } from '@shared/image.types';
 })
 export class ImageUploadEditComponent {
   selectedFile: File | null = null;
+  selectedTabIndex = 0;
   uploading = false;
   errorMessage = '';
   successMessage = '';
@@ -68,12 +81,24 @@ export class ImageUploadEditComponent {
     const input = event.target as HTMLInputElement;
     const file = input.files?.item(0) ?? null;
     this.selectedFile = file;
+    if (file) {
+      this.selectedTabIndex = 1;
+    }
   }
 
   resetSelection() {
     this.selectedFile = null;
+    this.selectedTabIndex = 0;
     this.errorMessage = '';
     this.successMessage = '';
+  }
+
+  onTabChange(index: number) {
+    if (index > 0 && !this.selectedFile) {
+      this.selectedTabIndex = 0;
+      return;
+    }
+    this.selectedTabIndex = index;
   }
 
   handleSave(event: SaveEditedImageEvent) {

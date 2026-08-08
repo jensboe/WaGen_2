@@ -7,6 +7,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSliderModule } from '@angular/material/slider';
+import { MatTabsModule } from '@angular/material/tabs';
 import { ImageService, WatermarkItem } from './image.service';
 import type {
   AspectRatio,
@@ -31,7 +32,7 @@ type CropBounds = { x: number; y: number; width: number; height: number };
 @Component({
   selector: 'app-image-editor',
   standalone: true,
-  imports: [CommonModule, FormsModule, MatButtonModule, MatCardModule, MatFormFieldModule, MatInputModule, MatSelectModule, MatSliderModule],
+  imports: [CommonModule, FormsModule, MatButtonModule, MatCardModule, MatFormFieldModule, MatInputModule, MatSelectModule, MatSliderModule, MatTabsModule],
   template: `
     <section class="editor-shell">
       <mat-card>
@@ -41,10 +42,10 @@ type CropBounds = { x: number; y: number; width: number; height: number };
         </mat-card-header>
 
         <mat-card-content>
-          <div class="step-row">
-            <button mat-stroked-button type="button" [color]="currentStep === 'crop' ? 'primary' : undefined" (click)="setCurrentStep('crop')">1. Crop</button>
-            <button mat-stroked-button type="button" [color]="currentStep === 'redact' ? 'primary' : undefined" (click)="setCurrentStep('redact')" [disabled]="!loadedImage">2. Blur areas</button>
-          </div>
+          <mat-tab-group *ngIf="showStepTabs" [selectedIndex]="getCurrentStepTabIndex()" (selectedIndexChange)="onStepTabChange($event)">
+            <mat-tab label="Crop"></mat-tab>
+            <mat-tab label="Blur areas" [disabled]="!loadedImage"></mat-tab>
+          </mat-tab-group>
 
           <div class="canvas-container">
             <canvas #editorCanvas class="editor-canvas"></canvas>
@@ -128,7 +129,6 @@ type CropBounds = { x: number; y: number; width: number; height: number };
   `,
   styles: [
     ".editor-shell { padding: 1rem 0; }",
-    ".step-row { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-bottom: 1rem; }",
     ".canvas-container { display: flex; justify-content: center; margin-bottom: 1rem; }",
     ".editor-canvas { max-width: 100%; width: 100%; border: 1px solid #d1d5db; border-radius: 0.75rem; background: white; touch-action: none; }",
     ".editor-controls { display: grid; gap: 1rem; }",
@@ -146,6 +146,8 @@ export class ImageEditorComponent implements OnChanges, OnInit, AfterViewInit, O
   @Input() sourceFile?: File;
   @Input() sourceUrl?: string;
   @Input() initialMetadata?: ImageEditMetadata | null;
+  @Input() showStepTabs = true;
+  @Input() externalStep?: EditorStep;
   @Output() save = new EventEmitter<SaveEditedImageEvent>();
   @ViewChild('editorCanvas', { static: true }) editorCanvas!: ElementRef<HTMLCanvasElement>;
 
@@ -199,6 +201,10 @@ export class ImageEditorComponent implements OnChanges, OnInit, AfterViewInit, O
     if (changes['initialMetadata'] && this.initialMetadata && this.loadedImage) {
       this.applyMetadata(this.initialMetadata);
     }
+    if (changes['externalStep'] && this.externalStep) {
+      this.currentStep = this.externalStep;
+      this.drawCanvas();
+    }
   }
 
   ngAfterViewInit(): void {
@@ -227,6 +233,14 @@ export class ImageEditorComponent implements OnChanges, OnInit, AfterViewInit, O
   setCurrentStep(step: EditorStep) {
     this.currentStep = step;
     this.drawCanvas();
+  }
+
+  onStepTabChange(index: number) {
+    this.setCurrentStep(index === 0 ? 'crop' : 'redact');
+  }
+
+  getCurrentStepTabIndex() {
+    return this.currentStep === 'crop' ? 0 : 1;
   }
 
   setRedactionTool(tool: RedactionTool) {
