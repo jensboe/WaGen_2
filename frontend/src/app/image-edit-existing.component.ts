@@ -15,11 +15,8 @@ import { ImageService, ImageItem } from './image.service';
       </header>
 
       <ng-container *ngIf="image; else noImage">
-        <div class="image-summary">
-          <h3>{{ image.title || 'Untitled image' }}</h3>
-          <p>{{ image.description || 'No description available.' }}</p>
-          <p><strong>ID:</strong> {{ image.id }}</p>
-          <div *ngIf="image.originalUrl" class="image-preview">
+        <div class="image-summary" *ngIf="image.originalUrl">
+          <div class="image-preview">
             <img [src]="image.originalUrl" alt="Uploaded image" />
           </div>
         </div>

@@ -33,10 +33,8 @@ app.get('/health', (_req, res) => res.json({ status: 'ok' }));
 app.post('/upload-original', upload.single('image'), async (req: MulterRequest, res) => {
   if (!req.file) return res.status(400).json({ error: 'No file' });
   const originalPath = req.file.path;
-  const title = (req.body.title as string) || null;
-  const description = (req.body.description as string) || null;
   const img = await prisma.image.create({
-    data: { originalPath, title, description }
+    data: { originalPath }
   });
   res.json({ id: img.id, originalPath, originalUrl: publicUrlFromRequest(req, originalPath) });
 });
@@ -70,8 +68,6 @@ app.get('/images', async (req, res) => {
   res.json(
     images.map((image) => ({
       id: image.id,
-      title: image.title,
-      description: image.description,
       metadata: image.metadata ? JSON.parse(image.metadata) : null,
       createdAt: image.createdAt,
       originalUrl: image.originalPath ? publicUrlFromRequest(req, image.originalPath) : null,
@@ -85,8 +81,9 @@ app.get('/images/:id', async (req, res) => {
   const img = await prisma.image.findUnique({ where: { id } });
   if (!img) return res.status(404).json({ error: 'Not found' });
   res.json({
-    ...img,
+    id: img.id,
     metadata: img.metadata ? JSON.parse(img.metadata) : null,
+    createdAt: img.createdAt,
     originalUrl: img.originalPath ? publicUrlFromRequest(req, img.originalPath) : null,
     finalUrl: img.finalPath ? publicUrlFromRequest(req, img.finalPath) : null
   });

@@ -4,8 +4,6 @@ import { Observable } from 'rxjs';
 
 export interface ImageItem {
   id: number;
-  title?: string;
-  description?: string;
   originalUrl?: string | null;
   finalUrl?: string | null;
   metadata?: any;
@@ -26,11 +24,9 @@ export class ImageService {
     return this.http.get<ImageItem>(`${API_BASE}/images/${id}`);
   }
 
-  uploadImage(file: File, title: string, description: string): Observable<{ id: number; originalUrl: string }> {
+  uploadImage(file: File): Observable<{ id: number; originalUrl: string }> {
     const form = new FormData();
     form.append('image', file);
-    form.append('title', title);
-    form.append('description', description);
     return this.http.post<{ id: number; originalUrl: string }>(`${API_BASE}/upload-original`, form);
   }
 }

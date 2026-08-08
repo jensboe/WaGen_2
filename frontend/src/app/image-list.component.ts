@@ -16,10 +16,8 @@ import { ImageService, ImageItem } from './image.service';
 
       <div *ngIf="images.length; else emptyState" class="image-list">
         <article *ngFor="let image of images" class="image-card">
-          <div>
-            <strong>{{ image.title || 'Untitled image' }}</strong>
-            <p>{{ image.description || 'No description provided.' }}</p>
-            <p *ngIf="image.originalUrl">ID: {{ image.id }}</p>
+          <div *ngIf="image.originalUrl" class="image-preview">
+            <img [src]="image.originalUrl" alt="Uploaded image" />
           </div>
           <a [routerLink]="['/images', image.id, 'edit']">Edit</a>
         </article>
@@ -42,10 +40,9 @@ import { ImageService, ImageItem } from './image.service';
     "h2 { margin: 0 0 0.375rem; font-size: 2rem; }",
     "p { margin: 0; color: #555; }",
     ".image-list { display: grid; gap: 1rem; }",
-    ".image-card { display: flex; justify-content: space-between; align-items: center; padding: 1rem; border: 1px solid #ddd; border-radius: 0.75rem; background: #fff; }",
-    ".image-card strong { display: block; font-size: 1rem; margin-bottom: 0.5rem; }",
-    ".image-card p { margin: 0; color: #666; }",
-    ".image-card a { color: #2563eb; text-decoration: none; font-weight: 700; }",
+    ".image-card { display: flex; flex-direction: column; gap: 1rem; padding: 1rem; border: 1px solid #ddd; border-radius: 0.75rem; background: #fff; }",
+    ".image-preview img { width: 100%; height: auto; border-radius: 0.75rem; }",
+    ".image-card a { align-self: flex-end; color: #2563eb; text-decoration: none; font-weight: 700; }",
     ".image-card a:hover { text-decoration: underline; }",
     ".actions { margin-top: 1.5rem; }",
     ".button { display: inline-block; padding: 0.85rem 1.1rem; background: #2563eb; color: #fff; border-radius: 0.75rem; text-decoration: none; font-weight: 700; }",

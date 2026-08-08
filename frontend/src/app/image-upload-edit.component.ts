@@ -12,20 +12,10 @@ import { ImageService } from './image.service';
     <section class="page-shell">
       <header>
         <h2>Upload a New Image</h2>
-        <p>Choose a file and add image details before saving.</p>
+        <p>Select an image file to upload and save it.</p>
       </header>
 
       <form class="image-form" (ngSubmit)="uploadImage()">
-        <label>
-          Image title
-          <input type="text" [(ngModel)]="title" name="title" placeholder="Enter a title" />
-        </label>
-
-        <label>
-          Image description
-          <textarea [(ngModel)]="description" name="description" placeholder="Describe the image"></textarea>
-        </label>
-
         <label class="file-picker">
           <span>Select image</span>
           <input type="file" accept="image/*" (change)="onFileSelected($event)" />
@@ -66,8 +56,6 @@ import { ImageService } from './image.service';
   ]
 })
 export class ImageUploadEditComponent {
-  title = '';
-  description = '';
   selectedFile: File | null = null;
   uploading = false;
   errorMessage = '';
@@ -88,7 +76,7 @@ export class ImageUploadEditComponent {
     }
     this.errorMessage = '';
     this.uploading = true;
-    this.imageService.uploadImage(this.selectedFile, this.title, this.description).subscribe({
+    this.imageService.uploadImage(this.selectedFile).subscribe({
       next: () => {
         this.uploading = false;
         this.successMessage = 'Image uploaded successfully.';

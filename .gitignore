@@ -5,6 +5,7 @@ dist/
 /backend/.env
 /backend/data/
 /backend/prisma/dev.db
+/backend/prisma/*.db-journal
 .npm/
 .idea/
 

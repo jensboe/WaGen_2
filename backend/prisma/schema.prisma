@@ -11,8 +11,6 @@ model Image {
   id           Int      @id @default(autoincrement())
   originalPath String
   finalPath    String?
-  title        String?
-  description  String?
   metadata     String?
   createdAt    DateTime @default(now())
 }
