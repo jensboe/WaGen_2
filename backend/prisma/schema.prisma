@@ -16,9 +16,18 @@ model Image {
   cropWidth            Float?
   cropHeight           Float?
   aspectRatio          String?
-  watermarkSrc         String?
+  watermarkId          Int?
   watermarkPosition    String?
   watermarkProportion  Int?
   watermarkBorder      Int?
   createdAt            DateTime @default(now())
+  watermark            Watermark? @relation(fields: [watermarkId], references: [id], onDelete: SetNull)
+}
+
+model Watermark {
+  id        Int      @id @default(autoincrement())
+  label     String
+  filePath  String
+  createdAt DateTime @default(now())
+  images    Image[]
 }

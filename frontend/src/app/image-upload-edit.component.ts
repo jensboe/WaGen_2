@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ImageEditorComponent } from './image-editor.component';
 import { ImageService } from './image.service';
+import { SaveEditedImageEvent } from './image.types';
 
 @Component({
   selector: 'app-image-upload-edit',
@@ -75,7 +76,7 @@ export class ImageUploadEditComponent {
     this.successMessage = '';
   }
 
-  handleSave(event: { finalBlob: Blob; metadata: any }) {
+  handleSave(event: SaveEditedImageEvent) {
     if (!this.selectedFile) {
       this.errorMessage = 'No image selected for upload.';
       return;

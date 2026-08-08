@@ -1,13 +1,15 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, EventEmitter, Input, OnChanges, Output, SimpleChanges, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnChanges, Output, SimpleChanges, ViewChild, AfterViewInit, OnDestroy, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
+import { ImageService, WatermarkItem } from './image.service';
+import { AspectRatio, ImageEditMetadata, SaveEditedImageEvent, WatermarkPosition } from './image.types';
 
-type WatermarkPosition = 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
+type WatermarkOption = { id: number; label: string; src: string };
 
 @Component({
   selector: 'app-image-editor',
@@ -44,8 +46,9 @@ type WatermarkPosition = 'top-left' | 'top-right' | 'bottom-left' | 'bottom-righ
             <div class="control-row">
               <mat-form-field appearance="fill" class="full-width">
                 <mat-label>Watermark</mat-label>
-                <mat-select [(ngModel)]="watermarkSrc" (selectionChange)="onWatermarkChange($event.value)">
-                  <mat-option *ngFor="let option of watermarkOptions" [value]="option.value">{{ option.label }}</mat-option>
+                <mat-select [(ngModel)]="selectedWatermarkId" (selectionChange)="onWatermarkChange($event.value)">
+                  <mat-option [value]="null">No watermark</mat-option>
+                  <mat-option *ngFor="let option of watermarkOptions" [value]="option.id">{{ option.label }}</mat-option>
                 </mat-select>
               </mat-form-field>
 
@@ -58,6 +61,11 @@ type WatermarkPosition = 'top-left' | 'top-right' | 'bottom-left' | 'bottom-righ
                   <mat-option value="bottom-right">Bottom right</mat-option>
                 </mat-select>
               </mat-form-field>
+            </div>
+
+            <div class="watermark-upload-row">
+              <button mat-stroked-button type="button" (click)="openWatermarkUpload()">Upload watermark</button>
+              <input #watermarkFileInput type="file" accept="image/png,image/webp,image/svg+xml,image/jpeg" (change)="onWatermarkFileSelected($event)" hidden />
             </div>
 
           </div>
@@ -82,6 +90,7 @@ type WatermarkPosition = 'top-left' | 'top-right' | 'bottom-left' | 'bottom-righ
     ".editor-controls { display: grid; gap: 1rem; }",
     ".control-row { display: grid; gap: 0.75rem; grid-template-columns: repeat(2, minmax(0, 1fr)); }",
     ".control-row label { display: grid; gap: 0.35rem; font-weight: 600; color: #334155; }",
+    ".watermark-upload-row { display: flex; justify-content: flex-start; }",
     ".full-width { width: 100%; }",
     ".radio-group { display: grid; gap: 0.5rem; }",
     ".radio-group span { font-weight: 600; color: #334155; }",
@@ -89,32 +98,35 @@ type WatermarkPosition = 'top-left' | 'top-right' | 'bottom-left' | 'bottom-righ
     ".success-message { color: #047857; margin: 0; }"
   ]
 })
-export class ImageEditorComponent implements OnChanges, AfterViewInit, OnDestroy {
+export class ImageEditorComponent implements OnChanges, OnInit, AfterViewInit, OnDestroy {
   @Input() sourceFile?: File;
   @Input() sourceUrl?: string;
-  @Input() initialMetadata?: any;
-  @Output() save = new EventEmitter<{ finalBlob: Blob; metadata: any }>();
+  @Input() initialMetadata?: ImageEditMetadata | null;
+  @Output() save = new EventEmitter<SaveEditedImageEvent>();
   @ViewChild('editorCanvas', { static: true }) editorCanvas!: ElementRef<HTMLCanvasElement>;
+  @ViewChild('watermarkFileInput', { static: true }) watermarkFileInput!: ElementRef<HTMLInputElement>;
 
+  private imageService = inject(ImageService);
   loadedImage?: HTMLImageElement;
   crop = { x: 0, y: 0, width: 100, height: 100 };
   // aspect ratio: 'free' or ratio string
-  aspectRatio: 'free' | '1:1' | '16:9' | '4:3' = '1:1';
+  aspectRatio: AspectRatio = '1:1';
 
   // watermark as image asset
   watermarkDisabled = false;
-  watermarkSrc = 'assets/watermark-1.png';
+  selectedWatermarkId: number | null = null;
   watermarkPosition: WatermarkPosition = 'bottom-right';
   watermarkProportion = 10;
   watermarkBorder = 25;
-  watermarkOptions = [
-    { label: 'Pattern 1', value: 'assets/watermark-1.png' },
-    { label: 'Pattern 2', value: 'assets/watermark-2.png' }
-  ];
+  watermarkOptions: WatermarkOption[] = [];
   watermarkImg?: HTMLImageElement;
   errorMessage = '';
   successMessage = '';
   saving = false;
+
+  ngOnInit() {
+    this.loadWatermarkOptions();
+  }
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes['sourceFile'] && this.sourceFile) {
@@ -165,7 +177,7 @@ export class ImageEditorComponent implements OnChanges, AfterViewInit, OnDestroy
     image.src = source;
   }
 
-  onAspectRatioChange(value: 'free' | '1:1' | '16:9' | '4:3') {
+  onAspectRatioChange(value: AspectRatio) {
     this.aspectRatio = value;
     this.resetCrop();
     this.drawCanvas();
@@ -223,12 +235,84 @@ export class ImageEditorComponent implements OnChanges, AfterViewInit, OnDestroy
     this.crop.height = this.clamp((heightPx / imageHeight) * 100, 10, 100 - this.crop.y);
   }
 
-  onWatermarkChange(src: string) {
-    this.watermarkSrc = src;
+  onWatermarkChange(watermarkId: number | null) {
+    this.selectedWatermarkId = watermarkId;
+    if (watermarkId == null) {
+      this.watermarkImg = undefined;
+      this.drawCanvas();
+      return;
+    }
     if (!this.watermarkDisabled) {
       this.loadWatermarkImage();
       this.drawCanvas();
     }
+  }
+
+  openWatermarkUpload() {
+    this.watermarkFileInput.nativeElement.click();
+  }
+
+  onWatermarkFileSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.item(0) ?? null;
+    if (!file) {
+      return;
+    }
+
+    this.errorMessage = '';
+    this.successMessage = '';
+
+    this.imageService.uploadWatermark(file).subscribe({
+      next: (watermark) => {
+        this.loadWatermarkOptions(watermark);
+        this.successMessage = 'Watermark uploaded successfully.';
+        input.value = '';
+      },
+      error: () => {
+        this.errorMessage = 'Unable to upload the watermark. Please try again.';
+        input.value = '';
+      }
+    });
+  }
+
+  private loadWatermarkOptions(selectWatermark?: WatermarkItem) {
+    this.imageService.getWatermarks().subscribe({
+      next: (watermarks) => {
+        const uploadedOptions = watermarks.map((watermark) => ({
+          id: watermark.id,
+          label: watermark.label,
+          src: watermark.url
+        }));
+        this.watermarkOptions = uploadedOptions;
+
+        if (selectWatermark) {
+          this.selectedWatermarkId = selectWatermark.id;
+          this.loadWatermarkImage();
+          this.drawCanvas();
+          return;
+        }
+
+        const selectedOption = this.findWatermarkOptionById(this.selectedWatermarkId);
+        if (!selectedOption && this.selectedWatermarkId != null) {
+          this.selectedWatermarkId = null;
+          this.watermarkImg = undefined;
+          this.drawCanvas();
+          return;
+        }
+        this.selectedWatermarkId = selectedOption?.id ?? null;
+      },
+      error: () => {
+        this.watermarkOptions = [];
+      }
+    });
+  }
+
+  private findWatermarkOptionById(id: number | null) {
+    return this.watermarkOptions.find((option) => option.id === id);
+  }
+
+  private findWatermarkOptionBySrc(src: string) {
+    return this.watermarkOptions.find((option) => option.src === src);
   }
 
   private loadWatermarkImage() {
@@ -236,9 +320,15 @@ export class ImageEditorComponent implements OnChanges, AfterViewInit, OnDestroy
       this.watermarkImg = undefined;
       return;
     }
-    if (!this.watermarkSrc) return;
+    const watermarkSrc = this.findWatermarkOptionById(this.selectedWatermarkId)?.src;
+    if (!watermarkSrc) {
+      this.watermarkImg = undefined;
+      return;
+    }
     const img = new Image();
-    img.crossOrigin = 'anonymous';
+    if (watermarkSrc.startsWith('http://') || watermarkSrc.startsWith('https://')) {
+      img.crossOrigin = 'anonymous';
+    }
     img.onload = () => {
       this.watermarkImg = img;
       this.drawCanvas();
@@ -246,7 +336,7 @@ export class ImageEditorComponent implements OnChanges, AfterViewInit, OnDestroy
     img.onerror = () => {
       this.watermarkImg = undefined;
     };
-    img.src = this.watermarkSrc;
+    img.src = watermarkSrc;
   }
 
   resetCrop() {
@@ -388,7 +478,7 @@ export class ImageEditorComponent implements OnChanges, AfterViewInit, OnDestroy
     this.pointerMode = null;
   };
 
-  private applyMetadata(metadata: any) {
+  private applyMetadata(metadata: ImageEditMetadata) {
     if (!metadata) {
       return;
     }
@@ -406,7 +496,11 @@ export class ImageEditorComponent implements OnChanges, AfterViewInit, OnDestroy
       this.aspectRatio = 'free';
     }
     if (metadata.watermark) {
-      this.watermarkSrc = metadata.watermark.src ?? this.watermarkSrc;
+      if (metadata.watermark.id != null) {
+        this.selectedWatermarkId = metadata.watermark.id;
+      } else if (typeof metadata.watermark.src === 'string') {
+        this.selectedWatermarkId = this.findWatermarkOptionBySrc(metadata.watermark.src)?.id ?? null;
+      }
       this.watermarkPosition = metadata.watermark.position ?? this.watermarkPosition;
       this.watermarkProportion = metadata.watermark.proportion ?? this.watermarkProportion;
       this.watermarkBorder = metadata.watermark.border ?? this.watermarkBorder;
@@ -600,12 +694,12 @@ export class ImageEditorComponent implements OnChanges, AfterViewInit, OnDestroy
     }
   }
 
-  private buildMetadata() {
+  private buildMetadata(): ImageEditMetadata {
     return {
       crop: { ...this.crop },
       aspectRatio: this.aspectRatio,
       watermark: {
-        src: this.watermarkSrc,
+        id: this.selectedWatermarkId ?? undefined,
         position: this.watermarkPosition,
         proportion: this.watermarkProportion,
         border: this.watermarkBorder

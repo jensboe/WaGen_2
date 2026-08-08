@@ -3,6 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { ImageEditorComponent } from './image-editor.component';
 import { ImageService, ImageItem } from './image.service';
+import { SaveEditedImageEvent } from './image.types';
 
 @Component({
   selector: 'app-image-edit-existing',
@@ -62,7 +63,7 @@ export class ImageEditExistingComponent implements OnInit {
     }
   }
 
-  handleSave(event: { finalBlob: Blob; metadata: any }) {
+  handleSave(event: SaveEditedImageEvent) {
     if (!this.image) {
       this.errorMessage = 'No image loaded for editing.';
       return;

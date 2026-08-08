@@ -3,7 +3,7 @@ import express, { Request } from 'express';
 import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
-import { PrismaClient } from '@prisma/client';
+import { Prisma, PrismaClient } from '@prisma/client';
 import { PORT, UPLOAD_DIR } from './config';
 
 type MulterRequest = Request & { file?: Express.Multer.File };
@@ -16,12 +16,15 @@ type EditMetadata = {
   };
   aspectRatio?: 'free' | '1:1' | '16:9' | '4:3';
   watermark?: {
+    id?: number;
     src?: string;
     position?: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
     proportion?: number;
     border?: number;
   };
 };
+
+type ImageWithWatermark = Prisma.ImageGetPayload<{ include: { watermark: true } }>;
 
 const prisma = new PrismaClient();
 const app = express();
@@ -31,8 +34,9 @@ app.use(express.json());
 // Ensure upload directories exist
 fs.mkdirSync(path.join(UPLOAD_DIR, 'originals'), { recursive: true });
 fs.mkdirSync(path.join(UPLOAD_DIR, 'finals'), { recursive: true });
+fs.mkdirSync(path.join(UPLOAD_DIR, 'watermarks'), { recursive: true });
 
-const createStorage = (folder: 'originals' | 'finals') =>
+const createStorage = (folder: 'originals' | 'finals' | 'watermarks') =>
   multer.diskStorage({
     destination: (_req: MulterRequest, _file: Express.Multer.File, cb: (error: Error | null, destination: string) => void) =>
       cb(null, path.join(UPLOAD_DIR, folder)),
@@ -44,6 +48,7 @@ const createStorage = (folder: 'originals' | 'finals') =>
 
 const originalUpload = multer({ storage: createStorage('originals') });
 const finalUpload = multer({ storage: createStorage('finals') });
+const watermarkUpload = multer({ storage: createStorage('watermarks') });
 
 app.get('/health', (_req, res) => res.json({ status: 'ok' }));
 
@@ -75,6 +80,92 @@ app.post('/save-final', finalUpload.single('final'), async (req: MulterRequest, 
   res.json({ id: updated.id });
 });
 
+app.get('/watermarks', async (req, res) => {
+  const watermarks = await prisma.watermark.findMany({ orderBy: { createdAt: 'desc' } });
+  res.json(
+    watermarks.map((watermark) => ({
+      id: watermark.id,
+      label: watermark.label,
+      createdAt: watermark.createdAt,
+      url: publicUrlFromRequest(req, watermark.filePath)
+    }))
+  );
+});
+
+app.post('/watermarks', watermarkUpload.single('watermark'), async (req: MulterRequest, res) => {
+  if (!req.file) {
+    return res.status(400).json({ error: 'No watermark file provided' });
+  }
+
+  const watermark = await prisma.watermark.create({
+    data: {
+      label: req.file.originalname,
+      filePath: req.file.path
+    }
+  });
+
+  res.status(201).json({
+    id: watermark.id,
+    label: watermark.label,
+    createdAt: watermark.createdAt,
+    url: publicUrlFromRequest(req, watermark.filePath)
+  });
+});
+
+app.patch('/watermarks/:id', async (req, res) => {
+  const id = parseInt(req.params.id, 10);
+  const label = typeof req.body.label === 'string' ? req.body.label.trim() : '';
+
+  if (Number.isNaN(id)) {
+    return res.status(400).json({ error: 'Invalid watermark id' });
+  }
+  if (!label) {
+    return res.status(400).json({ error: 'Watermark label is required' });
+  }
+
+  const watermark = await prisma.watermark.update({
+    where: { id },
+    data: { label }
+  });
+
+  res.json({
+    id: watermark.id,
+    label: watermark.label,
+    createdAt: watermark.createdAt,
+    url: publicUrlFromRequest(req, watermark.filePath)
+  });
+});
+
+app.delete('/watermarks/:id', async (req, res) => {
+  const id = parseInt(req.params.id, 10);
+  if (Number.isNaN(id)) {
+    return res.status(400).json({ error: 'Invalid watermark id' });
+  }
+
+  const watermark = await prisma.watermark.findUnique({ where: { id } });
+  if (!watermark) {
+    return res.status(404).json({ error: 'Watermark not found' });
+  }
+
+  await prisma.image.updateMany({
+    where: { watermarkId: id },
+    data: {
+      watermarkId: null,
+      watermarkPosition: null,
+      watermarkProportion: null,
+      watermarkBorder: null
+    }
+  });
+
+  await prisma.watermark.delete({ where: { id } });
+
+  if (fs.existsSync(watermark.filePath)) {
+    fs.unlinkSync(watermark.filePath);
+  }
+
+  res.status(204).send();
+});
+
 // Get image metadata
 function publicUrl(filePath: string) {
   const relativePath = path.relative(UPLOAD_DIR, filePath).split(path.sep).join('/');
@@ -88,11 +179,14 @@ function publicUrlFromRequest(req: express.Request, filePath: string) {
 }
 
 app.get('/images', async (req, res) => {
-  const images = await prisma.image.findMany({ orderBy: { createdAt: 'desc' } });
+  const images = await prisma.image.findMany({
+    include: { watermark: true },
+    orderBy: { createdAt: 'desc' }
+  });
   res.json(
     images.map((image) => ({
       id: image.id,
-      metadata: buildImageMetadata(image),
+      metadata: buildImageMetadata(req, image),
       createdAt: image.createdAt,
       originalUrl: image.originalPath ? publicUrlFromRequest(req, image.originalPath) : null,
       finalUrl: image.finalPath ? publicUrlFromRequest(req, image.finalPath) : null
@@ -102,11 +196,14 @@ app.get('/images', async (req, res) => {
 
 app.get('/images/:id', async (req, res) => {
   const id = parseInt(req.params.id, 10);
-  const img = await prisma.image.findUnique({ where: { id } });
+  const img = await prisma.image.findUnique({
+    where: { id },
+    include: { watermark: true }
+  });
   if (!img) return res.status(404).json({ error: 'Not found' });
   res.json({
     id: img.id,
-    metadata: buildImageMetadata(img),
+    metadata: buildImageMetadata(req, img),
     createdAt: img.createdAt,
     originalUrl: img.originalPath ? publicUrlFromRequest(req, img.originalPath) : null,
     finalUrl: img.finalPath ? publicUrlFromRequest(req, img.finalPath) : null
@@ -131,31 +228,21 @@ function buildImageUpdateData(finalPath: string, metadata: EditMetadata | null) 
     cropWidth: metadata?.crop?.width ?? null,
     cropHeight: metadata?.crop?.height ?? null,
     aspectRatio: metadata?.aspectRatio ?? null,
-    watermarkSrc: metadata?.watermark?.src ?? null,
+    watermarkId: metadata?.watermark?.id ?? null,
     watermarkPosition: metadata?.watermark?.position ?? null,
     watermarkProportion: metadata?.watermark?.proportion != null ? Math.round(metadata.watermark.proportion) : null,
     watermarkBorder: metadata?.watermark?.border != null ? Math.round(metadata.watermark.border) : null
   };
 }
 
-function buildImageMetadata(image: {
-  cropX: number | null;
-  cropY: number | null;
-  cropWidth: number | null;
-  cropHeight: number | null;
-  aspectRatio: string | null;
-  watermarkSrc: string | null;
-  watermarkPosition: string | null;
-  watermarkProportion: number | null;
-  watermarkBorder: number | null;
-}) {
+function buildImageMetadata(req: express.Request, image: ImageWithWatermark) {
   const hasCrop =
     image.cropX != null &&
     image.cropY != null &&
     image.cropWidth != null &&
     image.cropHeight != null;
   const hasWatermark =
-    image.watermarkSrc != null ||
+    image.watermarkId != null ||
     image.watermarkPosition != null ||
     image.watermarkProportion != null ||
     image.watermarkBorder != null;
@@ -176,7 +263,8 @@ function buildImageMetadata(image: {
     aspectRatio: image.aspectRatio ?? undefined,
     watermark: hasWatermark
       ? {
-          src: image.watermarkSrc ?? undefined,
+          id: image.watermarkId ?? undefined,
+          src: image.watermark ? publicUrlFromRequest(req, image.watermark.filePath) : undefined,
           position: image.watermarkPosition ?? undefined,
           proportion: image.watermarkProportion ?? undefined,
           border: image.watermarkBorder ?? undefined
