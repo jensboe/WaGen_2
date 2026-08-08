@@ -1,8 +1,8 @@
-.editor-shell { padding: 1rem 0; }
-.canvas-container { display: flex; justify-content: center; margin-bottom: 1rem; }
-.editor-canvas { max-width: 100%; width: 100%; border: 1px solid #d1d5db; border-radius: 0.75rem; background: white; touch-action: none; }
-.editor-controls { display: grid; gap: 1rem; }
-.control-row { display: grid; gap: 0.75rem; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.editor-shell { padding: 0; }
+.canvas-container { display: flex; justify-content: center; margin-bottom: 0.75rem; }
+.editor-canvas { max-width: 100%; width: 100%; border: 1px solid #d1d5db; border-radius: 0; background: white; touch-action: none; }
+.editor-controls { display: grid; gap: 0.75rem; }
+.control-row { display: grid; gap: 0.5rem; grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .tool-row { display: flex; flex-wrap: wrap; gap: 0.5rem; }
 .control-hint { color: #475569; }
 .slider-field { display: grid; gap: 0.35rem; align-items: center; }

@@ -4,8 +4,37 @@ body {
   margin: 0;
   font-family: Roboto, "Helvetica Neue", sans-serif;
   background: #f5f5f5;
+  color: #111827;
 }
 
 * {
   box-sizing: border-box;
+}
+
+img,
+canvas {
+  border-radius: 0;
+}
+
+.mat-mdc-card {
+  border-radius: 0 !important;
+}
+
+.mat-mdc-card-content,
+.mat-mdc-card-header,
+.mat-mdc-card-actions,
+.mat-mdc-card-footer {
+  padding-left: 12px !important;
+  padding-right: 12px !important;
+}
+
+.mat-mdc-card-content:first-child,
+.mat-mdc-card-header:first-child {
+  padding-top: 12px !important;
+}
+
+.mat-mdc-card-actions,
+.mat-mdc-card-footer,
+.mat-mdc-card-content:last-child {
+  padding-bottom: 12px !important;
 }
