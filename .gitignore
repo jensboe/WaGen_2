@@ -5,9 +5,5 @@ dist/
 .npm/
 .idea/
 
-# Ignore generated session docs for todos and requirements
-/docs/todos.md
-/docs/requirements.md
-
 # Ignore tool attachment artifacts
 /.ai/
