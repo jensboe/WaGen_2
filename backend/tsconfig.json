@@ -4,9 +4,19 @@
     "module": "CommonJS",
     "outDir": "dist",
     "rootDir": "src",
+    "baseUrl": ".",
+    "paths": {
+      "@shared/image.types": [
+        "../shared/image.types.d.ts"
+      ]
+    },
     "strict": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true
-  }
+  },
+  "include": [
+    "src/**/*.ts",
+    "../shared/**/*.d.ts"
+  ]
 }

@@ -3,7 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { ImageEditorComponent } from './image-editor.component';
 import { ImageService, ImageItem } from './image.service';
-import { SaveEditedImageEvent } from './image.types';
+import type { SaveEditedImageEvent } from '@shared/image.types';
 
 @Component({
   selector: 'app-image-edit-existing',

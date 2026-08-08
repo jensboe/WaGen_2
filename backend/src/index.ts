@@ -3,27 +3,11 @@ import express, { Request } from 'express';
 import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
-import { Prisma, PrismaClient } from '@prisma/client';
+import { Prisma, PrismaClient, Watermark } from '@prisma/client';
 import { PORT, UPLOAD_DIR } from './config';
+import type { AspectRatio, ImageEditMetadata, ImageResponse, WatermarkPosition, WatermarkResponse } from '@shared/image.types';
 
 type MulterRequest = Request & { file?: Express.Multer.File };
-type EditMetadata = {
-  crop?: {
-    x?: number;
-    y?: number;
-    width?: number;
-    height?: number;
-  };
-  aspectRatio?: 'free' | '1:1' | '16:9' | '4:3';
-  watermark?: {
-    id?: number;
-    src?: string;
-    position?: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
-    proportion?: number;
-    border?: number;
-  };
-};
-
 type ImageWithWatermark = Prisma.ImageGetPayload<{ include: { watermark: true } }>;
 
 const prisma = new PrismaClient();
@@ -82,14 +66,7 @@ app.post('/save-final', finalUpload.single('final'), async (req: MulterRequest, 
 
 app.get('/watermarks', async (req, res) => {
   const watermarks = await prisma.watermark.findMany({ orderBy: { createdAt: 'desc' } });
-  res.json(
-    watermarks.map((watermark) => ({
-      id: watermark.id,
-      label: watermark.label,
-      createdAt: watermark.createdAt,
-      url: publicUrlFromRequest(req, watermark.filePath)
-    }))
-  );
+  res.json(watermarks.map((watermark) => buildWatermarkResponse(req, watermark)));
 });
 
 app.post('/watermarks', watermarkUpload.single('watermark'), async (req: MulterRequest, res) => {
@@ -104,12 +81,7 @@ app.post('/watermarks', watermarkUpload.single('watermark'), async (req: MulterR
     }
   });
 
-  res.status(201).json({
-    id: watermark.id,
-    label: watermark.label,
-    createdAt: watermark.createdAt,
-    url: publicUrlFromRequest(req, watermark.filePath)
-  });
+  res.status(201).json(buildWatermarkResponse(req, watermark));
 });
 
 app.patch('/watermarks/:id', async (req, res) => {
@@ -128,12 +100,7 @@ app.patch('/watermarks/:id', async (req, res) => {
     data: { label }
   });
 
-  res.json({
-    id: watermark.id,
-    label: watermark.label,
-    createdAt: watermark.createdAt,
-    url: publicUrlFromRequest(req, watermark.filePath)
-  });
+  res.json(buildWatermarkResponse(req, watermark));
 });
 
 app.delete('/watermarks/:id', async (req, res) => {
@@ -183,15 +150,7 @@ app.get('/images', async (req, res) => {
     include: { watermark: true },
     orderBy: { createdAt: 'desc' }
   });
-  res.json(
-    images.map((image) => ({
-      id: image.id,
-      metadata: buildImageMetadata(req, image),
-      createdAt: image.createdAt,
-      originalUrl: image.originalPath ? publicUrlFromRequest(req, image.originalPath) : null,
-      finalUrl: image.finalPath ? publicUrlFromRequest(req, image.finalPath) : null
-    }))
-  );
+  res.json(images.map((image) => buildImageResponse(req, image)));
 });
 
 app.get('/images/:id', async (req, res) => {
@@ -201,26 +160,20 @@ app.get('/images/:id', async (req, res) => {
     include: { watermark: true }
   });
   if (!img) return res.status(404).json({ error: 'Not found' });
-  res.json({
-    id: img.id,
-    metadata: buildImageMetadata(req, img),
-    createdAt: img.createdAt,
-    originalUrl: img.originalPath ? publicUrlFromRequest(req, img.originalPath) : null,
-    finalUrl: img.finalPath ? publicUrlFromRequest(req, img.finalPath) : null
-  });
+  res.json(buildImageResponse(req, img));
 });
 
 app.use('/static', express.static(UPLOAD_DIR));
 
-function parseMetadata(rawMetadata: unknown): EditMetadata | null {
+function parseMetadata(rawMetadata: unknown): ImageEditMetadata | null {
   if (typeof rawMetadata !== 'string' || rawMetadata.trim().length === 0) {
     return null;
   }
 
-  return JSON.parse(rawMetadata) as EditMetadata;
+  return JSON.parse(rawMetadata) as ImageEditMetadata;
 }
 
-function buildImageUpdateData(finalPath: string, metadata: EditMetadata | null) {
+function buildImageUpdateData(finalPath: string, metadata: ImageEditMetadata | null): Prisma.ImageUncheckedUpdateInput {
   return {
     finalPath,
     cropX: metadata?.crop?.x ?? null,
@@ -235,7 +188,7 @@ function buildImageUpdateData(finalPath: string, metadata: EditMetadata | null) 
   };
 }
 
-function buildImageMetadata(req: express.Request, image: ImageWithWatermark) {
+function buildImageMetadata(req: express.Request, image: ImageWithWatermark): ImageEditMetadata | null {
   const hasCrop =
     image.cropX != null &&
     image.cropY != null &&
@@ -254,22 +207,55 @@ function buildImageMetadata(req: express.Request, image: ImageWithWatermark) {
   return {
     crop: hasCrop
       ? {
-          x: image.cropX,
-          y: image.cropY,
-          width: image.cropWidth,
-          height: image.cropHeight
+          x: image.cropX ?? undefined,
+          y: image.cropY ?? undefined,
+          width: image.cropWidth ?? undefined,
+          height: image.cropHeight ?? undefined
         }
       : undefined,
-    aspectRatio: image.aspectRatio ?? undefined,
+    aspectRatio: normalizeAspectRatio(image.aspectRatio),
     watermark: hasWatermark
       ? {
           id: image.watermarkId ?? undefined,
           src: image.watermark ? publicUrlFromRequest(req, image.watermark.filePath) : undefined,
-          position: image.watermarkPosition ?? undefined,
+          position: normalizeWatermarkPosition(image.watermarkPosition),
           proportion: image.watermarkProportion ?? undefined,
           border: image.watermarkBorder ?? undefined
         }
       : undefined
+  };
+}
+
+function normalizeAspectRatio(value: string | null): AspectRatio | undefined {
+  if (value === 'free' || value === '1:1' || value === '16:9' || value === '4:3') {
+    return value;
+  }
+  return undefined;
+}
+
+function normalizeWatermarkPosition(value: string | null): WatermarkPosition | undefined {
+  if (value === 'top-left' || value === 'top-right' || value === 'bottom-left' || value === 'bottom-right') {
+    return value;
+  }
+  return undefined;
+}
+
+function buildWatermarkResponse(req: express.Request, watermark: Watermark): WatermarkResponse {
+  return {
+    id: watermark.id,
+    label: watermark.label,
+    createdAt: watermark.createdAt,
+    url: publicUrlFromRequest(req, watermark.filePath)
+  };
+}
+
+function buildImageResponse(req: express.Request, image: ImageWithWatermark): ImageResponse {
+  return {
+    id: image.id,
+    metadata: buildImageMetadata(req, image),
+    createdAt: image.createdAt,
+    originalUrl: image.originalPath ? publicUrlFromRequest(req, image.originalPath) : null,
+    finalUrl: image.finalPath ? publicUrlFromRequest(req, image.finalPath) : null
   };
 }
 

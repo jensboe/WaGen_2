@@ -23,6 +23,21 @@ export interface ImageEditMetadata {
   watermark?: WatermarkMetadata;
 }
 
+export interface WatermarkResponse {
+  id: number;
+  label: string;
+  createdAt: Date | string;
+  url: string;
+}
+
+export interface ImageResponse {
+  id: number;
+  metadata: ImageEditMetadata | null;
+  createdAt: Date | string;
+  originalUrl: string | null;
+  finalUrl: string | null;
+}
+
 export interface SaveEditedImageEvent {
   finalBlob: Blob;
   metadata: ImageEditMetadata;

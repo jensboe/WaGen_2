@@ -7,7 +7,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { ImageService, WatermarkItem } from './image.service';
-import { AspectRatio, ImageEditMetadata, SaveEditedImageEvent, WatermarkPosition } from './image.types';
+import type { AspectRatio, ImageEditMetadata, SaveEditedImageEvent, WatermarkPosition } from '@shared/image.types';
 
 type WatermarkOption = { id: number; label: string; src: string };
 

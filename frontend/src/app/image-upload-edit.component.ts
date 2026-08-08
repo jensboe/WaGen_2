@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ImageEditorComponent } from './image-editor.component';
 import { ImageService } from './image.service';
-import { SaveEditedImageEvent } from './image.types';
+import type { SaveEditedImageEvent } from '@shared/image.types';
 
 @Component({
   selector: 'app-image-upload-edit',
