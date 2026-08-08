@@ -1,0 +1,24 @@
+<section class="page-shell">
+  <header>
+    <h2>Edit Existing Image</h2>
+    <p>Crop the image, blur sensitive areas, and place a watermark on an already uploaded image.</p>
+  </header>
+
+  <ng-container *ngIf="image; else noImage">
+    <app-image-editor
+      *ngIf="image.originalUrl"
+      [sourceUrl]="image.originalUrl"
+      [initialMetadata]="image.metadata"
+      (save)="handleSave($event)">
+    </app-image-editor>
+
+    <div *ngIf="errorMessage" class="error">{{ errorMessage }}</div>
+    <div *ngIf="successMessage" class="success">{{ successMessage }}</div>
+  </ng-container>
+
+  <ng-template #noImage>
+    <div class="placeholder">
+      <p>No image selected. Please choose an image from the image list.</p>
+    </div>
+  </ng-template>
+</section>

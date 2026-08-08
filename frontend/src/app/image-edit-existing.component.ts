@@ -9,40 +9,8 @@ import type { SaveEditedImageEvent } from '@shared/image.types';
   selector: 'app-image-edit-existing',
   standalone: true,
   imports: [CommonModule, ImageEditorComponent],
-  template: `
-    <section class="page-shell">
-      <header>
-        <h2>Edit Existing Image</h2>
-        <p>Crop the image, blur sensitive areas, and place a watermark on an already uploaded image.</p>
-      </header>
-
-      <ng-container *ngIf="image; else noImage">
-        <app-image-editor
-          *ngIf="image.originalUrl"
-          [sourceUrl]="image.originalUrl"
-          [initialMetadata]="image.metadata"
-          (save)="handleSave($event)">
-        </app-image-editor>
-
-        <div *ngIf="errorMessage" class="error">{{ errorMessage }}</div>
-        <div *ngIf="successMessage" class="success">{{ successMessage }}</div>
-      </ng-container>
-
-      <ng-template #noImage>
-        <div class="placeholder">
-          <p>No image selected. Please choose an image from the image list.</p>
-        </div>
-      </ng-template>
-    </section>
-  `,
-  styles: [
-    ".page-shell { padding: 1.5rem; max-width: 820px; margin: 0 auto; }",
-    "header { margin-bottom: 1.5rem; }",
-    "h2 { margin: 0 0 0.375rem; font-size: 2rem; }",
-    ".image-summary { padding: 1rem; border: 1px solid #d1d5db; border-radius: 0.75rem; background: #fff; margin-bottom: 1rem; }",
-    ".image-preview img { display: block; max-width: 100%; border-radius: 0.75rem; margin-top: 1rem; }",
-    ".placeholder { padding: 1.25rem; border: 1px dashed #cbd5e1; border-radius: 0.75rem; color: #475569; background: #f8fafc; }"
-  ]
+  templateUrl: './image-edit-existing.component.html',
+  styleUrl: './image-edit-existing.component.scss'
 })
 export class ImageEditExistingComponent implements OnInit {
   image: ImageItem | null = null;

@@ -1,0 +1,36 @@
+<section class="page-shell">
+  <header>
+    <h2>Upload a New Image</h2>
+    <p>Select an image file, crop it, blur sensitive areas, and add a watermark before saving.</p>
+  </header>
+
+  <mat-tab-group [selectedIndex]="selectedTabIndex" (selectedIndexChange)="onTabChange($event)">
+    <mat-tab label="Upload"></mat-tab>
+    <mat-tab label="Crop" [disabled]="!selectedFile"></mat-tab>
+    <mat-tab label="Blur areas" [disabled]="!selectedFile"></mat-tab>
+  </mat-tab-group>
+
+  <div class="file-selection" *ngIf="selectedTabIndex === 0">
+    <label class="file-picker">
+      <span>Select image</span>
+      <input type="file" accept="image/*" (change)="onFileSelected($event)" />
+    </label>
+  </div>
+
+  <div *ngIf="selectedFile && selectedTabIndex > 0">
+    <app-image-editor
+      [sourceFile]="selectedFile"
+      [showStepTabs]="false"
+      [externalStep]="selectedTabIndex === 1 ? 'crop' : 'redact'"
+      (save)="handleSave($event)">
+    </app-image-editor>
+  </div>
+
+  <p *ngIf="errorMessage" class="error">{{ errorMessage }}</p>
+  <p *ngIf="successMessage" class="success">{{ successMessage }}</p>
+
+  <div class="actions" *ngIf="selectedFile">
+    <button type="button" (click)="resetSelection()">Choose another image</button>
+    <a routerLink="/images">Cancel</a>
+  </div>
+</section>

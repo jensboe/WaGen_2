@@ -1,0 +1,38 @@
+<section class="page-shell">
+  <header>
+    <h2>Image Gallery</h2>
+    <p>Browse uploaded images and open them for editing.</p>
+  </header>
+
+  <div class="gallery-toolbar" *ngIf="images.length">
+    <span>Show</span>
+    <mat-button-toggle-group [(ngModel)]="displayMode" aria-label="Image version">
+      <mat-button-toggle value="original">Original</mat-button-toggle>
+      <mat-button-toggle value="final">Final</mat-button-toggle>
+    </mat-button-toggle-group>
+  </div>
+
+  <div *ngIf="images.length; else emptyState" class="image-list">
+    <mat-card *ngFor="let image of images" class="image-card" appearance="outlined">
+      <div class="image-preview" [class.missing-image]="!getDisplayUrl(image)">
+        <img *ngIf="getDisplayUrl(image); else missingImage" [src]="getDisplayUrl(image)!" [alt]="displayMode === 'original' ? 'Original image' : 'Final image'" />
+        <ng-template #missingImage>
+          <div class="missing-image-label">No final image yet</div>
+        </ng-template>
+      </div>
+      <mat-card-actions align="end">
+        <a mat-button color="primary" [routerLink]="['/images', image.id, 'edit']">Edit</a>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+
+  <ng-template #emptyState>
+    <mat-card class="empty-state" appearance="outlined">
+      <p>No images available yet. Upload a new image to get started.</p>
+    </mat-card>
+  </ng-template>
+
+  <div class="actions">
+    <a mat-flat-button color="primary" routerLink="/upload">Upload new image</a>
+  </div>
+</section>
