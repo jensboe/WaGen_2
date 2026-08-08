@@ -20,7 +20,7 @@ import type {
   WatermarkPosition
 } from '@shared/image.types';
 
-type EditorStep = 'crop' | 'redact' | 'watermark';
+type EditorStep = 'crop' | 'redact';
 type CropPointerMode = 'move' | 'nw' | 'ne' | 'sw' | 'se' | null;
 type RectangleResizeHandle = 'nw' | 'ne' | 'sw' | 'se';
 type RedactionPointerMode = 'rectangle-create' | 'rectangle-move' | 'rectangle-rotate' | `rectangle-resize-${RectangleResizeHandle}` | 'brush-draw' | null;
@@ -44,7 +44,6 @@ type CropBounds = { x: number; y: number; width: number; height: number };
           <div class="step-row">
             <button mat-stroked-button type="button" [color]="currentStep === 'crop' ? 'primary' : undefined" (click)="setCurrentStep('crop')">1. Crop</button>
             <button mat-stroked-button type="button" [color]="currentStep === 'redact' ? 'primary' : undefined" (click)="setCurrentStep('redact')" [disabled]="!loadedImage">2. Blur areas</button>
-            <button mat-stroked-button type="button" [color]="currentStep === 'watermark' ? 'primary' : undefined" (click)="setCurrentStep('watermark')" [disabled]="!loadedImage">3. Watermark</button>
           </div>
 
           <div class="canvas-container">
@@ -84,9 +83,6 @@ type CropBounds = { x: number; y: number; width: number; height: number };
               </mat-form-field>
             </div>
 
-            <div class="watermark-upload-row">
-              <button mat-stroked-button type="button" (click)="openWatermarkUpload()">Upload watermark</button>
-            </div>
           </div>
 
           <div class="editor-controls" *ngIf="currentStep === 'redact'">
@@ -116,39 +112,11 @@ type CropBounds = { x: number; y: number; width: number; height: number };
             </div>
           </div>
 
-          <div class="editor-controls" *ngIf="currentStep === 'watermark'">
-            <div class="control-hint">The watermark preview is shown on the already cropped and blurred image.</div>
-
-            <div class="control-row">
-              <mat-form-field appearance="fill" class="full-width">
-                <mat-label>Watermark</mat-label>
-                <mat-select [(ngModel)]="selectedWatermarkId" (selectionChange)="onWatermarkChange($event.value)">
-                  <mat-option [value]="null">No watermark</mat-option>
-                  <mat-option *ngFor="let option of watermarkOptions" [value]="option.id">{{ option.label }}</mat-option>
-                </mat-select>
-              </mat-form-field>
-
-              <mat-form-field appearance="fill" class="full-width">
-                <mat-label>Watermark position</mat-label>
-                <mat-select [(ngModel)]="watermarkPosition" (selectionChange)="drawCanvas()">
-                  <mat-option value="top-left">Top left</mat-option>
-                  <mat-option value="top-right">Top right</mat-option>
-                  <mat-option value="bottom-left">Bottom left</mat-option>
-                  <mat-option value="bottom-right">Bottom right</mat-option>
-                </mat-select>
-              </mat-form-field>
-            </div>
-
-            <div class="watermark-upload-row">
-              <button mat-stroked-button type="button" (click)="openWatermarkUpload()">Upload watermark</button>
-              <input #watermarkFileInput type="file" accept="image/png,image/webp,image/svg+xml,image/jpeg" (change)="onWatermarkFileSelected($event)" hidden />
-            </div>
-          </div>
         </mat-card-content>
 
         <mat-card-actions>
-          <button mat-flat-button color="primary" (click)="saveFinal()" [disabled]="!loadedImage || saving">Save final image</button>
-          <button mat-button type="button" (click)="resetCrop()" [disabled]="!loadedImage || saving">Reset crop</button>
+          <button mat-flat-button color="primary" (click)="saveFinal()" [disabled]="!loadedImage || saving">Save image</button>
+          <button *ngIf="currentStep === 'crop'" mat-button type="button" (click)="resetCrop()" [disabled]="!loadedImage || saving">Reset crop</button>
         </mat-card-actions>
 
         <mat-card-footer>
@@ -167,7 +135,6 @@ type CropBounds = { x: number; y: number; width: number; height: number };
     ".control-row { display: grid; gap: 0.75rem; grid-template-columns: repeat(2, minmax(0, 1fr)); }",
     ".tool-row { display: flex; flex-wrap: wrap; gap: 0.5rem; }",
     ".control-hint { color: #475569; }",
-    ".watermark-upload-row { display: flex; justify-content: flex-start; }",
     ".slider-field { display: grid; gap: 0.35rem; align-items: center; }",
     ".slider-field label { font-weight: 600; color: #334155; }",
     ".full-width { width: 100%; }",
@@ -181,7 +148,6 @@ export class ImageEditorComponent implements OnChanges, OnInit, AfterViewInit, O
   @Input() initialMetadata?: ImageEditMetadata | null;
   @Output() save = new EventEmitter<SaveEditedImageEvent>();
   @ViewChild('editorCanvas', { static: true }) editorCanvas!: ElementRef<HTMLCanvasElement>;
-  @ViewChild('watermarkFileInput', { static: true }) watermarkFileInput!: ElementRef<HTMLInputElement>;
 
   private imageService = inject(ImageService);
   loadedImage?: HTMLImageElement;
@@ -290,33 +256,6 @@ export class ImageEditorComponent implements OnChanges, OnInit, AfterViewInit, O
     this.drawCanvas();
   }
 
-  openWatermarkUpload() {
-    this.watermarkFileInput.nativeElement.click();
-  }
-
-  onWatermarkFileSelected(event: Event) {
-    const input = event.target as HTMLInputElement;
-    const file = input.files?.item(0) ?? null;
-    if (!file) {
-      return;
-    }
-
-    this.errorMessage = '';
-    this.successMessage = '';
-
-    this.imageService.uploadWatermark(file).subscribe({
-      next: (watermark) => {
-        this.loadWatermarkOptions(watermark);
-        this.successMessage = 'Watermark uploaded successfully.';
-        input.value = '';
-      },
-      error: () => {
-        this.errorMessage = 'Unable to upload the watermark. Please try again.';
-        input.value = '';
-      }
-    });
-  }
-
   removeSelectedRectangle() {
     if (!this.selectedRectangle) {
       return;
@@ -385,7 +324,7 @@ export class ImageEditorComponent implements OnChanges, OnInit, AfterViewInit, O
       return;
     }
 
-    this.drawCroppedCanvas(this.currentStep === 'watermark');
+    this.drawCroppedCanvas(true);
   }
 
   private loadSourceFile(file: File) {
