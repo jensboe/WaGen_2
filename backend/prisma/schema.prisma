@@ -8,9 +8,17 @@ datasource db {
 }
 
 model Image {
-  id           Int      @id @default(autoincrement())
-  originalPath String
-  finalPath    String?
-  metadata     String?
-  createdAt    DateTime @default(now())
+  id                   Int      @id @default(autoincrement())
+  originalPath         String
+  finalPath            String?
+  cropX                Float?
+  cropY                Float?
+  cropWidth            Float?
+  cropHeight           Float?
+  aspectRatio          String?
+  watermarkSrc         String?
+  watermarkPosition    String?
+  watermarkProportion  Int?
+  watermarkBorder      Int?
+  createdAt            DateTime @default(now())
 }
