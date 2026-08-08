@@ -20,6 +20,25 @@
       "restart": true,
       "cwd": "${workspaceFolder}/backend",
       "skipFiles": ["<node_internals>/**"]
+    },
+    {
+      "name": "Launch Frontend (npm start)",
+      "type": "node",
+      "request": "launch",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "start"],
+      "cwd": "${workspaceFolder}/frontend",
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "skipFiles": ["<node_internals>/**"]
+    },
+    {
+      "name": "Launch Frontend in Chrome",
+      "type": "chrome",
+      "request": "launch",
+      "url": "http://localhost:4200",
+      "webRoot": "${workspaceFolder}/frontend",
+      "preLaunchTask": "Frontend: Serve"
     }
   ]
 }
