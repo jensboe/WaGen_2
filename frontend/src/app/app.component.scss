@@ -13,15 +13,12 @@
 }
 
 .app-header {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  align-items: center;
-  gap: 1rem;
-  padding: 1rem 1.25rem;
-  background: white;
   border-radius: 1rem;
-  box-shadow: 0 20px 50px rgba(15, 23, 42, 0.08);
+}
+
+.logo {
+  display: flex;
+  flex-direction: column;
 }
 
 .logo h1 {
@@ -29,29 +26,13 @@
   font-size: 1.9rem;
 }
 
-.logo p {
-  margin: 0.3rem 0 0;
-  color: #475569;
+.subtitle {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.95rem;
 }
 
-.app-nav {
-  display: flex;
-  gap: 1rem;
-}
-
-.app-nav a {
-  padding: 0.75rem 1.25rem;
-  border-radius: 999px;
-  text-decoration: none;
-  color: #334155;
-  background: #e2e8f0;
-  transition: background 0.2s ease, color 0.2s ease;
-}
-
-.app-nav a.active,
-.app-nav a:hover {
-  background: #1d4ed8;
-  color: white;
+.spacer {
+  flex: 1 1 auto;
 }
 
 .app-content {

@@ -1,14 +1,15 @@
 <main class="app-shell">
-  <header class="app-header">
+  <mat-toolbar color="primary" class="app-header">
     <div class="logo">
       <h1>WaGen</h1>
-      <p>Browser-based watermarking and image editing.</p>
+      <span class="subtitle">Browser-based watermarking and image editing.</span>
     </div>
-    <nav class="app-nav">
-      <a routerLink="/images" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Images</a>
-      <a routerLink="/upload" routerLinkActive="active">Upload & edit</a>
-    </nav>
-  </header>
+
+    <span class="spacer"></span>
+
+    <a mat-button routerLink="/images" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Images</a>
+    <a mat-button routerLink="/upload" routerLinkActive="active">Upload & edit</a>
+  </mat-toolbar>
 
   <main class="app-content">
     <router-outlet></router-outlet>
