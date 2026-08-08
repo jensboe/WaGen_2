@@ -25,16 +25,27 @@ We use GitHub Issues and GitHub Projects to plan, track, and organize work.
 ### Technical Overview
 
 - Backend: Node.js + Express + Prisma + MySQL
-- Frontend: Angular (to be created)
+- Frontend: Angular (scaffolded in `frontend/`)
 - Dev environment: VS Code, local development possible without Dev Container
 - Netcup deployment: Node.js 26.x, MySQL, file upload directory
 
 ## Local Development
 
-1. Copy `.env.example` to `.env`
-2. `npm install`
-3. `npx prisma generate`
+### Backend
+1. Copy `backend/.env.example` to `backend/.env`
+2. `cd backend && npm install`
+3. `npm run prisma:generate`
 4. `npm run dev`
+
+### Frontend
+1. `cd frontend && npm install`
+2. `npm run build`
+3. `npm start`
+
+## Repository structure
+
+- `backend/` — Node.js API server with Prisma and MySQL support
+- `frontend/` — Angular application for image upload and watermarking
 
 ## Note
 
