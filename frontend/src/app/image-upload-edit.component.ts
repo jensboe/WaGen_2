@@ -2,38 +2,38 @@ import { Component } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { ImageEditorComponent } from './image-editor.component';
 import { ImageService } from './image.service';
 
 @Component({
   selector: 'app-image-upload-edit',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink, ImageEditorComponent],
   template: `
     <section class="page-shell">
       <header>
         <h2>Upload a New Image</h2>
-        <p>Select an image file to upload and save it.</p>
+        <p>Select an image file and crop or watermark it before saving.</p>
       </header>
 
-      <form class="image-form" (ngSubmit)="uploadImage()">
+      <div class="file-selection" *ngIf="!selectedFile">
         <label class="file-picker">
           <span>Select image</span>
           <input type="file" accept="image/*" (change)="onFileSelected($event)" />
         </label>
+      </div>
 
-        <div *ngIf="selectedFile" class="preview">
-          <p><strong>Selected file:</strong> {{ selectedFile.name }}</p>
-          <p><strong>Size:</strong> {{ selectedFile.size | number }} bytes</p>
-        </div>
+      <div *ngIf="selectedFile">
+        <app-image-editor [sourceFile]="selectedFile" (save)="handleSave($event)"></app-image-editor>
+      </div>
 
-        <p *ngIf="errorMessage" class="error">{{ errorMessage }}</p>
-        <p *ngIf="successMessage" class="success">{{ successMessage }}</p>
+      <p *ngIf="errorMessage" class="error">{{ errorMessage }}</p>
+      <p *ngIf="successMessage" class="success">{{ successMessage }}</p>
 
-        <div class="actions">
-          <button type="submit" [disabled]="!selectedFile || uploading">Save image</button>
-          <a routerLink="/images">Cancel</a>
-        </div>
-      </form>
+      <div class="actions" *ngIf="selectedFile">
+        <button type="button" (click)="resetSelection()">Choose another image</button>
+        <a routerLink="/images">Cancel</a>
+      </div>
     </section>
   `,
   styles: [
@@ -69,18 +69,36 @@ export class ImageUploadEditComponent {
     this.selectedFile = file;
   }
 
-  uploadImage() {
+  resetSelection() {
+    this.selectedFile = null;
+    this.errorMessage = '';
+    this.successMessage = '';
+  }
+
+  handleSave(event: { finalBlob: Blob; metadata: any }) {
     if (!this.selectedFile) {
-      this.errorMessage = 'Please choose an image file before saving.';
+      this.errorMessage = 'No image selected for upload.';
       return;
     }
+
     this.errorMessage = '';
+    this.successMessage = '';
     this.uploading = true;
+
     this.imageService.uploadImage(this.selectedFile).subscribe({
-      next: () => {
-        this.uploading = false;
-        this.successMessage = 'Image uploaded successfully.';
-        this.router.navigate(['/images']);
+      next: (result) => {
+        const finalFile = new File([event.finalBlob], `final-${this.selectedFile!.name}`, { type: 'image/jpeg' });
+        this.imageService.saveFinalImage(result.id, finalFile, event.metadata).subscribe({
+          next: () => {
+            this.uploading = false;
+            this.successMessage = 'Image uploaded and saved successfully.';
+            this.router.navigate(['/images']);
+          },
+          error: () => {
+            this.uploading = false;
+            this.errorMessage = 'Final save failed. Please try again.';
+          }
+        });
       },
       error: () => {
         this.uploading = false;

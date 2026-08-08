@@ -1,29 +1,30 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { ImageEditorComponent } from './image-editor.component';
 import { ImageService, ImageItem } from './image.service';
 
 @Component({
   selector: 'app-image-edit-existing',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, ImageEditorComponent],
   template: `
     <section class="page-shell">
       <header>
         <h2>Edit Existing Image</h2>
-        <p>Modify an image you already uploaded. Select a watermark position or update the crop.</p>
+        <p>Crop and place a watermark on an already uploaded image.</p>
       </header>
 
       <ng-container *ngIf="image; else noImage">
-        <div class="image-summary" *ngIf="image.originalUrl">
-          <div class="image-preview">
-            <img [src]="image.originalUrl" alt="Uploaded image" />
-          </div>
-        </div>
+        <app-image-editor
+          *ngIf="image.originalUrl"
+          [sourceUrl]="image.originalUrl"
+          [initialMetadata]="image.metadata"
+          (save)="handleSave($event)">
+        </app-image-editor>
 
-        <div class="placeholder">
-          <p>The detailed edit UI will be implemented here, including crop and watermark placement.</p>
-        </div>
+        <div *ngIf="errorMessage" class="error">{{ errorMessage }}</div>
+        <div *ngIf="successMessage" class="success">{{ successMessage }}</div>
       </ng-container>
 
       <ng-template #noImage>
@@ -44,6 +45,9 @@ import { ImageService, ImageItem } from './image.service';
 })
 export class ImageEditExistingComponent implements OnInit {
   image: ImageItem | null = null;
+  errorMessage = '';
+  successMessage = '';
+  saving = false;
 
   constructor(private route: ActivatedRoute, private imageService: ImageService) {}
 
@@ -56,5 +60,27 @@ export class ImageEditExistingComponent implements OnInit {
         error: () => (this.image = null)
       });
     }
+  }
+
+  handleSave(event: { finalBlob: Blob; metadata: any }) {
+    if (!this.image) {
+      this.errorMessage = 'No image loaded for editing.';
+      return;
+    }
+    this.errorMessage = '';
+    this.successMessage = '';
+    this.saving = true;
+
+    const finalFile = new File([event.finalBlob], `final-${this.image.id}.jpg`, { type: 'image/jpeg' });
+    this.imageService.saveFinalImage(this.image.id, finalFile, event.metadata).subscribe({
+      next: () => {
+        this.saving = false;
+        this.successMessage = 'Final image saved successfully.';
+      },
+      error: () => {
+        this.saving = false;
+        this.errorMessage = 'Unable to save the final image. Please try again.';
+      }
+    });
   }
 }

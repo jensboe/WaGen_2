@@ -29,4 +29,12 @@ export class ImageService {
     form.append('image', file);
     return this.http.post<{ id: number; originalUrl: string }>(`${API_BASE}/upload-original`, form);
   }
+
+  saveFinalImage(imageId: number, finalFile: File, metadata: any): Observable<{ id: number }> {
+    const form = new FormData();
+    form.append('id', imageId.toString());
+    form.append('final', finalFile);
+    form.append('metadata', JSON.stringify(metadata));
+    return this.http.post<{ id: number }>(`${API_BASE}/save-final`, form);
+  }
 }
