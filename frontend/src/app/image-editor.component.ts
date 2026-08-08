@@ -41,6 +41,25 @@ type WatermarkPosition = 'top-left' | 'top-right' | 'bottom-left' | 'bottom-righ
               </mat-select>
             </mat-form-field>
 
+            <div class="control-row">
+              <mat-form-field appearance="fill" class="full-width">
+                <mat-label>Watermark</mat-label>
+                <mat-select [(ngModel)]="watermarkSrc" (selectionChange)="onWatermarkChange($event.value)">
+                  <mat-option *ngFor="let option of watermarkOptions" [value]="option.value">{{ option.label }}</mat-option>
+                </mat-select>
+              </mat-form-field>
+
+              <mat-form-field appearance="fill" class="full-width">
+                <mat-label>Watermark position</mat-label>
+                <mat-select [(ngModel)]="watermarkPosition" (selectionChange)="drawCanvas()">
+                  <mat-option value="top-left">Top left</mat-option>
+                  <mat-option value="top-right">Top right</mat-option>
+                  <mat-option value="bottom-left">Bottom left</mat-option>
+                  <mat-option value="bottom-right">Bottom right</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+
           </div>
         </mat-card-content>
 
@@ -83,10 +102,11 @@ export class ImageEditorComponent implements OnChanges, AfterViewInit, OnDestroy
   aspectRatio: 'free' | '1:1' | '16:9' | '4:3' = '1:1';
 
   // watermark as image asset
-  // watermark is temporarily disabled while we focus on cropping
-  watermarkDisabled = true;
+  watermarkDisabled = false;
   watermarkSrc = 'assets/watermark-1.png';
   watermarkPosition: WatermarkPosition = 'bottom-right';
+  watermarkProportion = 10;
+  watermarkBorder = 25;
   watermarkOptions = [
     { label: 'Pattern 1', value: 'assets/watermark-1.png' },
     { label: 'Pattern 2', value: 'assets/watermark-2.png' }
@@ -212,7 +232,6 @@ export class ImageEditorComponent implements OnChanges, AfterViewInit, OnDestroy
   }
 
   private loadWatermarkImage() {
-    // do not load the watermark while focusing on crop
     if (this.watermarkDisabled) {
       this.watermarkImg = undefined;
       return;
@@ -389,6 +408,8 @@ export class ImageEditorComponent implements OnChanges, AfterViewInit, OnDestroy
     if (metadata.watermark) {
       this.watermarkSrc = metadata.watermark.src ?? this.watermarkSrc;
       this.watermarkPosition = metadata.watermark.position ?? this.watermarkPosition;
+      this.watermarkProportion = metadata.watermark.proportion ?? this.watermarkProportion;
+      this.watermarkBorder = metadata.watermark.border ?? this.watermarkBorder;
       if (!this.watermarkDisabled) this.loadWatermarkImage();
     }
     this.drawCanvas();
@@ -549,28 +570,13 @@ export class ImageEditorComponent implements OnChanges, AfterViewInit, OnDestroy
     }
     ctx.restore();
 
-    // Draw watermark preview inside crop area (disabled while focusing on crop)
+    // Draw watermark preview inside crop area
     if (!this.watermarkDisabled && this.watermarkImg) {
-      const wm = this.watermarkImg;
-      // scale watermark to 20% of crop width
-      const wmMaxWidth = Math.round(cropW * 0.25);
-      const scale = wmMaxWidth / wm.naturalWidth;
-      const wmWidth = Math.round(wm.naturalWidth * scale);
-      const wmHeight = Math.round(wm.naturalHeight * scale);
-      let x = cropX + cropW - wmWidth - Math.round(cropW * 0.03);
-      let y = cropY + cropH - Math.round(cropH * 0.03) - wmHeight;
-      if (this.watermarkPosition === 'top-left') {
-        x = cropX + Math.round(cropW * 0.03);
-        y = cropY + Math.round(cropH * 0.03);
-      } else if (this.watermarkPosition === 'top-right') {
-        x = cropX + cropW - wmWidth - Math.round(cropW * 0.03);
-        y = cropY + Math.round(cropH * 0.03);
-      } else if (this.watermarkPosition === 'bottom-left') {
-        x = cropX + Math.round(cropW * 0.03);
-        y = cropY + cropH - wmHeight - Math.round(cropH * 0.03);
-      }
+      const placement = this.getWatermarkPlacement(cropW, cropH);
+      const x = cropX + placement.x;
+      const y = cropY + placement.y;
       ctx.globalAlpha = 0.85;
-      ctx.drawImage(wm, x, y, wmWidth, wmHeight);
+      ctx.drawImage(this.watermarkImg, x, y, placement.width, placement.height);
       ctx.globalAlpha = 1.0;
     }
   }
@@ -600,7 +606,9 @@ export class ImageEditorComponent implements OnChanges, AfterViewInit, OnDestroy
       aspectRatio: this.aspectRatio,
       watermark: {
         src: this.watermarkSrc,
-        position: this.watermarkPosition
+        position: this.watermarkPosition,
+        proportion: this.watermarkProportion,
+        border: this.watermarkBorder
       }
     };
   }
@@ -661,32 +669,65 @@ export class ImageEditorComponent implements OnChanges, AfterViewInit, OnDestroy
 
   private drawWatermark(ctx: CanvasRenderingContext2D, width: number, height: number) {
     if (!this.watermarkImg) return;
-    const wm = this.watermarkImg;
-    // scale watermark to 20% of width
-    const wmMaxWidth = Math.round(width * 0.25);
-    const scale = wmMaxWidth / wm.naturalWidth;
-    const wmWidth = Math.round(wm.naturalWidth * scale);
-    const wmHeight = Math.round(wm.naturalHeight * scale);
-    const padding = Math.round(width * 0.03);
-    let x = padding;
-    let y = height - padding - wmHeight;
-
-    if (this.watermarkPosition === 'top-left') {
-      x = padding;
-      y = padding;
-    } else if (this.watermarkPosition === 'top-right') {
-      x = width - wmWidth - padding;
-      y = padding;
-    } else if (this.watermarkPosition === 'bottom-left') {
-      x = padding;
-      y = height - wmHeight - padding;
-    } else if (this.watermarkPosition === 'bottom-right') {
-      x = width - wmWidth - padding;
-      y = height - wmHeight - padding;
-    }
+    const placement = this.getWatermarkPlacement(width, height);
 
     ctx.globalAlpha = 0.85;
-    ctx.drawImage(wm, x, y, wmWidth, wmHeight);
+    ctx.drawImage(this.watermarkImg, placement.x, placement.y, placement.width, placement.height);
     ctx.globalAlpha = 1.0;
+  }
+
+  private getWatermarkPlacement(width: number, height: number) {
+    if (!this.watermarkImg) {
+      return { x: 0, y: 0, width: 0, height: 0 };
+    }
+
+    const resized = this.getResizedWatermarkDimensions(width, height);
+    const border = (resized.height * this.watermarkBorder) / 100;
+    const horizontalPosition = this.getHorizontalPositionRelative();
+    const verticalPosition = this.getVerticalPositionRelative();
+
+    const x = this.calcWatermarkPosition(border, width, resized.width, horizontalPosition);
+    const y = this.calcWatermarkPosition(border, height, resized.height, verticalPosition);
+
+    return { x, y, width: resized.width, height: resized.height };
+  }
+
+  private getResizedWatermarkDimensions(imageWidth: number, imageHeight: number) {
+    if (!this.watermarkImg) {
+      return { width: 0, height: 0 };
+    }
+
+    const imageArea = imageWidth * imageHeight;
+    const watermarkArea = this.watermarkImg.naturalWidth * this.watermarkImg.naturalHeight;
+    const targetArea = imageArea * (this.watermarkProportion / 100);
+
+    return {
+      width: this.calculateResizedLength(this.watermarkImg.naturalWidth, watermarkArea, targetArea),
+      height: this.calculateResizedLength(this.watermarkImg.naturalHeight, watermarkArea, targetArea)
+    };
+  }
+
+  private calculateResizedLength(actualLength: number, actualArea: number, targetArea: number) {
+    return Math.round(actualLength * Math.sqrt(targetArea / actualArea));
+  }
+
+  private calcWatermarkPosition(border: number, originalLength: number, watermarkLength: number, relativePosition: number) {
+    const minPosition = border;
+    const maxPosition = originalLength - (border + watermarkLength);
+    return Math.round(minPosition + (maxPosition - minPosition) * relativePosition);
+  }
+
+  private getHorizontalPositionRelative() {
+    if (this.watermarkPosition === 'top-right' || this.watermarkPosition === 'bottom-right') {
+      return 1;
+    }
+    return 0;
+  }
+
+  private getVerticalPositionRelative() {
+    if (this.watermarkPosition === 'bottom-left' || this.watermarkPosition === 'bottom-right') {
+      return 1;
+    }
+    return 0;
   }
 }
