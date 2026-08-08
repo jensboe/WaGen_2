@@ -727,6 +727,7 @@ export class ImageEditorComponent implements OnChanges, OnInit, AfterViewInit, O
       return;
     }
 
+    this.enableHighQualityImageScaling(context);
     context.clearRect(0, 0, canvas.width, canvas.height);
     context.drawImage(this.loadedImage, 0, 0, canvas.width, canvas.height);
 
@@ -805,6 +806,7 @@ export class ImageEditorComponent implements OnChanges, OnInit, AfterViewInit, O
       return;
     }
 
+    this.enableHighQualityImageScaling(context);
     context.clearRect(0, 0, canvas.width, canvas.height);
     context.drawImage(baseCanvas, 0, 0);
     this.drawRedactionsOnCanvas(context, baseCanvas, previewMetrics.scale, this.getRenderableRedactions());
@@ -990,6 +992,7 @@ export class ImageEditorComponent implements OnChanges, OnInit, AfterViewInit, O
     canvas.height = Math.max(1, Math.round(height));
     const context = canvas.getContext('2d');
     if (context && this.loadedImage) {
+      this.enableHighQualityImageScaling(context);
       context.drawImage(this.loadedImage, cropBounds.x, cropBounds.y, cropBounds.width, cropBounds.height, 0, 0, canvas.width, canvas.height);
     }
     return canvas;
@@ -1012,14 +1015,19 @@ export class ImageEditorComponent implements OnChanges, OnInit, AfterViewInit, O
   private getCropPreviewMetrics(cropBounds: CropBounds): PreviewMetrics {
     const maxWidth = 760;
     const maxHeight = 560;
-    const widthScale = cropBounds.width > maxWidth ? maxWidth / cropBounds.width : 1;
-    const heightScale = cropBounds.height > maxHeight ? maxHeight / cropBounds.height : 1;
+    const widthScale = maxWidth / cropBounds.width;
+    const heightScale = maxHeight / cropBounds.height;
     const scale = Math.min(widthScale, heightScale);
     return {
       scale,
       width: Math.max(1, Math.round(cropBounds.width * scale)),
       height: Math.max(1, Math.round(cropBounds.height * scale))
     };
+  }
+
+  private enableHighQualityImageScaling(context: CanvasRenderingContext2D) {
+    context.imageSmoothingEnabled = true;
+    context.imageSmoothingQuality = 'high';
   }
 
   private computeCropBounds(): CropBounds {
@@ -1046,6 +1054,7 @@ export class ImageEditorComponent implements OnChanges, OnInit, AfterViewInit, O
     }
 
     const placement = this.getWatermarkPlacement(width, height, scale);
+    this.enableHighQualityImageScaling(context);
     context.globalAlpha = 0.85;
     context.drawImage(this.watermarkImg, placement.x, placement.y, placement.width, placement.height);
     context.globalAlpha = 1;
