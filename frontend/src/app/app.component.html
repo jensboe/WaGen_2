@@ -2,14 +2,15 @@
   <mat-toolbar color="primary" class="app-header">
     <div class="logo">
       <h1>WaGen</h1>
-      <span class="subtitle">Browser-based watermarking and image editing.</span>
+      <span class="subtitle" i18n>Browser-based watermarking and image editing.</span>
     </div>
 
     <span class="spacer"></span>
 
-    <a mat-button routerLink="/images" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Images</a>
-    <a mat-button routerLink="/watermarks" routerLinkActive="active">Watermarks</a>
-    <a mat-button routerLink="/upload" routerLinkActive="active">Upload & edit</a>
+    <a mat-button routerLink="/images" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }"
+      i18n>Images</a>
+    <a mat-button routerLink="/watermarks" routerLinkActive="active" i18n>Watermarks</a>
+    <a mat-button routerLink="/upload" routerLinkActive="active" i18n>Upload & edit</a>
   </mat-toolbar>
 
   <main class="app-content">

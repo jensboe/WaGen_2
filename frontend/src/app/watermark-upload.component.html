@@ -1,13 +1,13 @@
 <section class="page-shell">
   <header>
-    <h2>Watermarks</h2>
-    <p>Upload watermark files and reuse them in the editor.</p>
+    <h2 i18n>Watermarks</h2>
+    <p i18n>Upload watermark files and reuse them in the editor.</p>
   </header>
 
   <mat-card class="upload-card" appearance="outlined">
     <mat-card-content>
       <div class="upload-actions">
-        <button mat-flat-button color="primary" type="button" (click)="fileInput.click()">Upload watermark</button>
+        <button mat-flat-button color="primary" type="button" (click)="fileInput.click()" i18n>Upload watermark</button>
         <input #fileInput type="file" accept="image/png,image/webp,image/svg+xml,image/jpeg" (change)="onFileSelected($event)" hidden />
       </div>
       <p *ngIf="errorMessage" class="error-message">{{ errorMessage }}</p>
@@ -23,7 +23,7 @@
       <mat-card-content>
         <ng-container *ngIf="editingWatermarkId === watermark.id; else readMode">
           <mat-form-field appearance="outline" class="full-width">
-            <mat-label>Name</mat-label>
+            <mat-label i18n>Name</mat-label>
             <input matInput [(ngModel)]="editingLabel" />
           </mat-form-field>
         </ng-container>
@@ -33,12 +33,12 @@
       </mat-card-content>
       <mat-card-actions align="end">
         <ng-container *ngIf="editingWatermarkId === watermark.id; else actionMode">
-          <button mat-button type="button" (click)="cancelEdit()">Cancel</button>
-          <button mat-flat-button color="primary" type="button" (click)="saveRename(watermark)">Save</button>
+          <button mat-button type="button" (click)="cancelEdit()" i18n>Cancel</button>
+          <button mat-flat-button color="primary" type="button" (click)="saveRename(watermark)" i18n>Save</button>
         </ng-container>
         <ng-template #actionMode>
-          <button mat-button type="button" (click)="startEdit(watermark)">Rename</button>
-          <button mat-button color="warn" type="button" (click)="deleteWatermark(watermark)">Delete</button>
+          <button mat-button type="button" (click)="startEdit(watermark)" i18n>Rename</button>
+          <button mat-button color="warn" type="button" (click)="deleteWatermark(watermark)" i18n>Delete</button>
         </ng-template>
       </mat-card-actions>
     </mat-card>
@@ -47,7 +47,7 @@
   <ng-template #emptyState>
     <mat-card class="empty-state" appearance="outlined">
       <mat-card-content>
-        <p>No watermarks uploaded yet.</p>
+        <p i18n>No watermarks have been uploaded yet.</p>
       </mat-card-content>
     </mat-card>
   </ng-template>

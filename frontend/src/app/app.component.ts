@@ -11,5 +11,5 @@ import { MatToolbarModule } from '@angular/material/toolbar';
   styleUrl: './app.component.scss'
 })
 export class AppComponent {
-  title = 'Vibe Wagen';
+  title = 'WaGen';
 }

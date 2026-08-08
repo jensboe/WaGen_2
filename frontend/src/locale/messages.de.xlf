@@ -1,0 +1,641 @@
+<?xml version='1.0' encoding='utf-8'?>
+<xliff xmlns:ns0="urn:oasis:names:tc:xliff:document:1.2" version="1.2" target-language="de">
+  <file source-language="en" datatype="plaintext" original="ng2.template">
+    <body>
+      <trans-unit id="6538039267616395086" datatype="html">
+        <source>Browser-based watermarking and image editing.</source>
+        <target>Browserbasierte Wasserzeichen- und Bildbearbeitung.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/app.component.html</context>
+          <context context-type="linenumber">5,6</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="414887388288176527" datatype="html">
+        <source>Images</source>
+        <target>Bilder</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/app.component.html</context>
+          <context context-type="linenumber">11,12</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6453602852155364961" datatype="html">
+        <source>Watermarks</source>
+        <target>Wasserzeichen</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/app.component.html</context>
+          <context context-type="linenumber">12,13</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/watermark-upload.component.html</context>
+          <context context-type="linenumber">3,4</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5817104853905077098" datatype="html">
+        <source>Upload &amp; edit</source>
+        <target>Hochladen &amp; bearbeiten</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/app.component.html</context>
+          <context context-type="linenumber">13,14</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4741546134563733880" datatype="html">
+        <source>Edit Existing Image</source>
+        <target>Vorhandenes Bild bearbeiten</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/image-edit-existing.component.html</context>
+          <context context-type="linenumber">3,4</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6103848825830005617" datatype="html">
+        <source>Crop the image, blur sensitive areas, and place a watermark on an already uploaded
+          image.</source>
+        <target>Bild zuschneiden, sensible Bereiche unkenntlich machen und ein Wasserzeichen auf
+          einem bereits hochgeladenen Bild platzieren.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/image-edit-existing.component.html</context>
+          <context context-type="linenumber">4,5</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1663085116168612752" datatype="html">
+        <source>No image selected. Please choose an image from the image list.</source>
+        <target>Kein Bild ausgewählt. Bitte wählen Sie ein Bild aus der Bildliste.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/image-edit-existing.component.html</context>
+          <context context-type="linenumber">21,22</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2259233179403308117" datatype="html">
+        <source>No image loaded for editing.</source>
+        <target>Kein Bild zur Bearbeitung geladen.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/image-edit-existing.component.ts</context>
+          <context context-type="linenumber">36</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7819730060897388391" datatype="html">
+        <source>The final image was saved successfully.</source>
+        <target>Das fertige Bild wurde erfolgreich gespeichert.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/image-edit-existing.component.ts</context>
+          <context context-type="linenumber">47</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="539366135113231970" datatype="html">
+        <source>The final image could not be saved. Please try again.</source>
+        <target>Das fertige Bild konnte nicht gespeichert werden. Bitte versuchen Sie es erneut.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/image-edit-existing.component.ts</context>
+          <context context-type="linenumber">51</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6455560236506988818" datatype="html">
+        <source>Image Editor</source>
+        <target>Bildeditor</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/image-editor.component.html</context>
+          <context context-type="linenumber">4</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7968231745163552672" datatype="html">
+        <source>First crop, then blur sensitive areas, and finally place the watermark.</source>
+        <target>Schneiden Sie zuerst das Bild zu, machen Sie dann sensible Bereiche unkenntlich und
+          platzieren Sie anschließend das Wasserzeichen.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/image-editor.component.html</context>
+          <context context-type="linenumber">5</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2184922477427494351" datatype="html">
+        <source>Crop</source>
+        <target>Zuschneiden</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/image-editor.component.html</context>
+          <context context-type="linenumber">11</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/image-upload-edit.component.html</context>
+          <context context-type="linenumber">12</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4089746030778454473" datatype="html">
+        <source>Blur Areas</source>
+        <target>Bereiche unkenntlich machen</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/image-editor.component.html</context>
+          <context context-type="linenumber">14</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2731444081887519968" datatype="html">
+        <source>Drag the crop frame directly on the image and adjust it. The blur step only uses the
+          cropped image area.</source>
+        <target>Ziehen Sie den Zuschneiderahmen direkt auf dem Bild und passen Sie ihn an. Für das
+          Unkenntlichmachen wird nur der zugeschnittene Bildbereich verwendet.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/image-editor.component.html</context>
+          <context context-type="linenumber">23,25</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="3230427787661940532" datatype="html">
+        <source>Aspect Ratio</source>
+        <target>Seitenverhältnis</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/image-editor.component.html</context>
+          <context context-type="linenumber">26</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5891064527381218201" datatype="html">
+        <source>Free</source>
+        <target>Frei</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/image-editor.component.html</context>
+          <context context-type="linenumber">28</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7258505765725127188" datatype="html">
+        <source>Watermark</source>
+        <target>Wasserzeichen</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/image-editor.component.html</context>
+          <context context-type="linenumber">37</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2754607022392905799" datatype="html">
+        <source>No Watermark</source>
+        <target>Kein Wasserzeichen</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/image-editor.component.html</context>
+          <context context-type="linenumber">39</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4213157051493149857" datatype="html">
+        <source>Watermark Position</source>
+        <target>Position des Wasserzeichens</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/image-editor.component.html</context>
+          <context context-type="linenumber">45</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7437546388321615771" datatype="html">
+        <source>Top Left</source>
+        <target>Oben links</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/image-editor.component.html</context>
+          <context context-type="linenumber">47</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8224585816284521000" datatype="html">
+        <source>Top Right</source>
+        <target>Oben rechts</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/image-editor.component.html</context>
+          <context context-type="linenumber">48</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6072329911847367445" datatype="html">
+        <source>Bottom Left</source>
+        <target>Unten links</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/image-editor.component.html</context>
+          <context context-type="linenumber">49</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4924851972474284371" datatype="html">
+        <source>Bottom Right</source>
+        <target>Unten rechts</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/image-editor.component.html</context>
+          <context context-type="linenumber">50</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1442911934983681399" datatype="html">
+        <source>Only the cropped image area is shown here. Add blur with a movable rectangle or
+          paint it with the brush.</source>
+        <target>Hier wird nur der zugeschnittene Bildbereich angezeigt. Fügen Sie die
+          Unkenntlichmachung mit einem verschiebbaren Rechteck oder mit dem Pinsel hinzu.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/image-editor.component.html</context>
+          <context context-type="linenumber">57,59</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6984675258712446825" datatype="html">
+        <source>Rectangle</source>
+        <target>Rechteck</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/image-editor.component.html</context>
+          <context context-type="linenumber">60,61</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8792981974820069318" datatype="html">
+        <source>Brush</source>
+        <target>Pinsel</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/image-editor.component.html</context>
+          <context context-type="linenumber">61,62</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5115884963908913466" datatype="html">
+        <source>Remove Rectangle</source>
+        <target>Rechteck entfernen</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/image-editor.component.html</context>
+          <context context-type="linenumber">62,63</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="26186281507887684" datatype="html">
+        <source>Undo Brush</source>
+        <target>Pinsel rückgängig</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/image-editor.component.html</context>
+          <context context-type="linenumber">63,64</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8193912662253833654" datatype="html">
+        <source>Clear All</source>
+        <target>Alles löschen</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/image-editor.component.html</context>
+          <context context-type="linenumber">64,65</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2831435722151028509" datatype="html">
+        <source>Drag to create the rectangle. Adjust it via the corner points and rotate it using
+          the round handle above.</source>
+        <target>Ziehen Sie, um das Rechteck zu erstellen. Passen Sie es über die Eckpunkte an und
+          drehen Sie es mit dem runden Griff darüber.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/image-editor.component.html</context>
+          <context context-type="linenumber">67,69</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="3043694605593588492" datatype="html">
+        <source>Brush Size: <x id="INTERPOLATION" equiv-text="{{ brushSize }}" />
+        </source>
+        <target>Pinselgröße: <x id="INTERPOLATION" equiv-text="{{ brushSize }}" />
+        </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/image-editor.component.html</context>
+          <context context-type="linenumber">71,72</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1029438851106092097" datatype="html">
+        <source>Save image</source>
+        <target>Bild speichern</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/image-editor.component.html</context>
+          <context context-type="linenumber">85,86</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4161566190857251054" datatype="html">
+        <source>Reset Crop</source>
+        <target>Zuschneiden zurücksetzen</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/image-editor.component.html</context>
+          <context context-type="linenumber">86,87</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5508949528207921015" datatype="html">
+        <source>The final image is ready to be saved.</source>
+        <target>Das fertige Bild kann gespeichert werden.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/image-editor.component.ts</context>
+          <context context-type="linenumber">217</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6964211782582468034" datatype="html">
+        <source>The final image could not be created. Please try again.</source>
+        <target>Das fertige Bild konnte nicht erstellt werden. Bitte versuchen Sie es erneut.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/image-editor.component.ts</context>
+          <context context-type="linenumber">219</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2546164643923166188" datatype="html">
+        <source>The image could not be loaded for editing.</source>
+        <target>Das Bild konnte zur Bearbeitung nicht geladen werden.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/image-editor.component.ts</context>
+          <context context-type="linenumber">270</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5427022229806889191" datatype="html">
+        <source>The blur areas were removed because the crop changed.</source>
+        <target>Die Bereiche zur Unkenntlichmachung wurden entfernt, weil der Zuschnitt geändert
+          wurde.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/image-editor.component.ts</context>
+          <context context-type="linenumber">1344</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2491965534435095467" datatype="html">
+        <source>Image Gallery</source>
+        <target>Bildergalerie</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/image-list.component.html</context>
+          <context context-type="linenumber">3,4</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5800704956322670607" datatype="html">
+        <source>Browse uploaded images and open them for editing.</source>
+        <target>Durchsuchen Sie die hochgeladenen Bilder und öffnen Sie sie zur Bearbeitung.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/image-list.component.html</context>
+          <context context-type="linenumber">4,5</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8461842260159597706" datatype="html">
+        <source>Show</source>
+        <target>Anzeigen</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/image-list.component.html</context>
+          <context context-type="linenumber">8,9</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6644750758666027346" datatype="html">
+        <source>Image version</source>
+        <target>Bildversion</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/image-list.component.html</context>
+          <context context-type="linenumber">9</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7329217250595054697" datatype="html">
+        <source>Original</source>
+        <target>Original</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/image-list.component.html</context>
+          <context context-type="linenumber">10</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="3008573030448240863" datatype="html">
+        <source>Edited</source>
+        <target>Bearbeitet</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/image-list.component.html</context>
+          <context context-type="linenumber">11</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7592854475293551720" datatype="html">
+        <source>Original image</source>
+        <target>Originalbild</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/image-list.component.html</context>
+          <context context-type="linenumber">18</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8706728137802996953" datatype="html">
+        <source>No final image yet</source>
+        <target>Noch kein fertiges Bild</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/image-list.component.html</context>
+          <context context-type="linenumber">23,24</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7585826646011739428" datatype="html">
+        <source>Edit</source>
+        <target>Bearbeiten</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/image-list.component.html</context>
+          <context context-type="linenumber">27,28</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2313976314536297877" datatype="html">
+        <source>No images available yet. Upload a new image to get started.</source>
+        <target>Noch keine Bilder verfügbar. Laden Sie ein neues Bild hoch, um zu beginnen.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/image-list.component.html</context>
+          <context context-type="linenumber">34,35</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6973948056639772089" datatype="html">
+        <source>Upload new image</source>
+        <target>Neues Bild hochladen</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/image-list.component.html</context>
+          <context context-type="linenumber">39,40</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5076480426200736732" datatype="html">
+        <source>Upload a New Image</source>
+        <target>Neues Bild hochladen</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/image-upload-edit.component.html</context>
+          <context context-type="linenumber">3,4</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7843414644853413589" datatype="html">
+        <source>Select an image file, crop it, blur sensitive areas, and add a watermark before
+          saving.</source>
+        <target>Wählen Sie eine Bilddatei aus, schneiden Sie sie zu, machen Sie sensible Bereiche
+          unkenntlich und fügen Sie vor dem Speichern ein Wasserzeichen hinzu.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/image-upload-edit.component.html</context>
+          <context context-type="linenumber">4,5</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6932865105766151309" datatype="html">
+        <source>Upload</source>
+        <target>Hochladen</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/image-upload-edit.component.html</context>
+          <context context-type="linenumber">9</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1037483632716218991" datatype="html">
+        <source>Blur areas</source>
+        <target>Bereiche unkenntlich machen</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/image-upload-edit.component.html</context>
+          <context context-type="linenumber">15</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="9061257599906709984" datatype="html">
+        <source>Select image</source>
+        <target>Bild auswählen</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/image-upload-edit.component.html</context>
+          <context context-type="linenumber">21,22</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1197586878845786253" datatype="html">
+        <source>Choose another image</source>
+        <target>Anderes Bild auswählen</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/image-upload-edit.component.html</context>
+          <context context-type="linenumber">39,40</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2159130950882492111" datatype="html">
+        <source>Cancel</source>
+        <target>Abbrechen</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/image-upload-edit.component.html</context>
+          <context context-type="linenumber">40,41</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/watermark-upload.component.html</context>
+          <context context-type="linenumber">36,37</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6696171566567780826" datatype="html">
+        <source>No image selected for upload.</source>
+        <target>Kein Bild zum Hochladen ausgewählt.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/image-upload-edit.component.ts</context>
+          <context context-type="linenumber">52</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8344871631879257318" datatype="html">
+        <source>Image was successfully uploaded and saved.</source>
+        <target>Das Bild wurde erfolgreich hochgeladen und gespeichert.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/image-upload-edit.component.ts</context>
+          <context context-type="linenumber">66</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2584522062344153182" datatype="html">
+        <source>The final save failed. Please try again.</source>
+        <target>Das abschließende Speichern ist fehlgeschlagen. Bitte versuchen Sie es erneut.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/image-upload-edit.component.ts</context>
+          <context context-type="linenumber">71</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7575617315273181458" datatype="html">
+        <source>The upload failed. Please try again.</source>
+        <target>Das Hochladen ist fehlgeschlagen. Bitte versuchen Sie es erneut.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/image-upload-edit.component.ts</context>
+          <context context-type="linenumber">77</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1089909943627511640" datatype="html">
+        <source>Upload watermark files and reuse them in the editor.</source>
+        <target>Laden Sie Wasserzeichendateien hoch und verwenden Sie sie im Editor erneut.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/watermark-upload.component.html</context>
+          <context context-type="linenumber">4,5</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2942867363297556747" datatype="html">
+        <source>Upload watermark</source>
+        <target>Wasserzeichen hochladen</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/watermark-upload.component.html</context>
+          <context context-type="linenumber">10,11</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8953033926734869941" datatype="html">
+        <source>Name</source>
+        <target>Name</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/watermark-upload.component.html</context>
+          <context context-type="linenumber">26,27</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="3768927257183755959" datatype="html">
+        <source>Save</source>
+        <target>Speichern</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/watermark-upload.component.html</context>
+          <context context-type="linenumber">37,38</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6041115344061899387" datatype="html">
+        <source>Rename</source>
+        <target>Umbenennen</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/watermark-upload.component.html</context>
+          <context context-type="linenumber">40,41</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7022070615528435141" datatype="html">
+        <source>Delete</source>
+        <target>Löschen</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/watermark-upload.component.html</context>
+          <context context-type="linenumber">41,42</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="695344347120387797" datatype="html">
+        <source>No watermarks have been uploaded yet.</source>
+        <target>Noch keine Wasserzeichen hochgeladen.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/watermark-upload.component.html</context>
+          <context context-type="linenumber">50,51</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2350099535651738375" datatype="html">
+        <source>Watermark uploaded successfully.</source>
+        <target>Wasserzeichen erfolgreich hochgeladen.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/watermark-upload.component.ts</context>
+          <context context-type="linenumber">41</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2627287609253235039" datatype="html">
+        <source>Failed to upload watermark. Please try again.</source>
+        <target>Das Wasserzeichen konnte nicht hochgeladen werden. Bitte versuchen Sie es erneut.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/watermark-upload.component.ts</context>
+          <context context-type="linenumber">45</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8389160314939094212" datatype="html">
+        <source>The watermark name cannot be empty.</source>
+        <target>Der Name des Wasserzeichens darf nicht leer sein.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/watermark-upload.component.ts</context>
+          <context context-type="linenumber">66</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7742234498090674957" datatype="html">
+        <source>Watermark renamed successfully.</source>
+        <target>Wasserzeichen erfolgreich umbenannt.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/watermark-upload.component.ts</context>
+          <context context-type="linenumber">76</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8321983397203277105" datatype="html">
+        <source>Failed to rename watermark. Please try again.</source>
+        <target>Das Wasserzeichen konnte nicht umbenannt werden. Bitte versuchen Sie es erneut.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/watermark-upload.component.ts</context>
+          <context context-type="linenumber">80</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1670175125212332789" datatype="html">
+        <source>Delete watermark &quot;<x id="watermarkLabel" equiv-text="watermark.label" />&quot;?</source>
+        <target>Wollen Sie das Wasserzeichen &quot;<x id="watermarkLabel" equiv-text="watermark.label" />&quot; löschen?</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/watermark-upload.component.ts</context>
+          <context context-type="linenumber">87</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6729813476389740640" datatype="html">
+        <source>Watermark deleted successfully.</source>
+        <target>Wasserzeichen erfolgreich gelöscht.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/watermark-upload.component.ts</context>
+          <context context-type="linenumber">102</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7628518485040947789" datatype="html">
+        <source>Failed to delete watermark. Please try again.</source>
+        <target>Das Wasserzeichen konnte nicht gelöscht werden. Bitte versuchen Sie es erneut.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/watermark-upload.component.ts</context>
+          <context context-type="linenumber">105</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="369579020333346329" datatype="html">
+        <source>Failed to load watermarks.</source>
+        <target>Die Wasserzeichen konnten nicht geladen werden.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/watermark-upload.component.ts</context>
+          <context context-type="linenumber">117</context>
+        </context-group>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

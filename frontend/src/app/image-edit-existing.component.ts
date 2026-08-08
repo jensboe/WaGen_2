@@ -33,7 +33,7 @@ export class ImageEditExistingComponent implements OnInit {
 
   handleSave(event: SaveEditedImageEvent) {
     if (!this.image) {
-      this.errorMessage = 'No image loaded for editing.';
+      this.errorMessage = $localize`No image loaded for editing.`;
       return;
     }
     this.errorMessage = '';
@@ -44,11 +44,11 @@ export class ImageEditExistingComponent implements OnInit {
     this.imageService.saveFinalImage(this.image.id, finalFile, event.metadata).subscribe({
       next: () => {
         this.saving = false;
-        this.successMessage = 'Final image saved successfully.';
+        this.successMessage = $localize`The final image was saved successfully.`;
       },
       error: () => {
         this.saving = false;
-        this.errorMessage = 'Unable to save the final image. Please try again.';
+        this.errorMessage = $localize`The final image could not be saved. Please try again.`;
       }
     });
   }

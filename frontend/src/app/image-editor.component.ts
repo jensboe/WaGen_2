@@ -214,9 +214,9 @@ export class ImageEditorComponent implements OnChanges, OnInit, AfterViewInit, O
     try {
       const finalBlob = await this.createFinalBlob();
       this.save.emit({ finalBlob, metadata: this.buildMetadata() });
-      this.successMessage = 'Final image is ready to save.';
+      this.successMessage = $localize`The final image is ready to be saved.`;
     } catch {
-      this.errorMessage = 'Unable to create the final image. Please try again.';
+      this.errorMessage = $localize`The final image could not be created. Please try again.`;
     } finally {
       this.saving = false;
     }
@@ -267,7 +267,7 @@ export class ImageEditorComponent implements OnChanges, OnInit, AfterViewInit, O
       }
     };
     image.onerror = () => {
-      this.errorMessage = 'Unable to load the image for editing.';
+      this.errorMessage = $localize`The image could not be loaded for editing.`;
     };
     image.src = source;
   }
@@ -1341,7 +1341,7 @@ export class ImageEditorComponent implements OnChanges, OnInit, AfterViewInit, O
     this.selectedRedactionId = null;
     this.activeBrushStroke = undefined;
     if (showMessage) {
-      this.successMessage = 'Redactions were cleared because the crop changed.';
+      this.successMessage = $localize`The blur areas were removed because the crop changed.`;
     }
   }
 

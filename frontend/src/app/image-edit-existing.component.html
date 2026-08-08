@@ -1,7 +1,7 @@
 <section class="page-shell">
   <header>
-    <h2>Edit Existing Image</h2>
-    <p>Crop the image, blur sensitive areas, and place a watermark on an already uploaded image.</p>
+    <h2 i18n>Edit Existing Image</h2>
+    <p i18n>Crop the image, blur sensitive areas, and place a watermark on an already uploaded image.</p>
   </header>
 
   <ng-container *ngIf="image; else noImage">
@@ -18,7 +18,7 @@
 
   <ng-template #noImage>
     <div class="placeholder">
-      <p>No image selected. Please choose an image from the image list.</p>
+      <p i18n>No image selected. Please choose an image from the image list.</p>
     </div>
   </ng-template>
 </section>

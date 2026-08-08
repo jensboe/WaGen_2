@@ -38,11 +38,11 @@ export class WatermarkUploadComponent {
     this.imageService.uploadWatermark(file).subscribe({
       next: (watermark) => {
         this.watermarks = [watermark, ...this.watermarks];
-        this.successMessage = 'Watermark uploaded successfully.';
+        this.successMessage = $localize`Watermark uploaded successfully.`;
         input.value = '';
       },
       error: () => {
-        this.errorMessage = 'Unable to upload watermark. Please try again.';
+        this.errorMessage = $localize`Failed to upload watermark. Please try again.`;
         input.value = '';
       }
     });
@@ -63,7 +63,7 @@ export class WatermarkUploadComponent {
   saveRename(watermark: WatermarkItem) {
     const label = this.editingLabel.trim();
     if (!label) {
-      this.errorMessage = 'Watermark name cannot be empty.';
+      this.errorMessage = $localize`The watermark name cannot be empty.`;
       return;
     }
 
@@ -73,17 +73,19 @@ export class WatermarkUploadComponent {
     this.imageService.renameWatermark(watermark.id, label).subscribe({
       next: (updatedWatermark) => {
         this.watermarks = this.watermarks.map((item) => (item.id === updatedWatermark.id ? updatedWatermark : item));
-        this.successMessage = 'Watermark renamed successfully.';
+        this.successMessage = $localize`Watermark renamed successfully.`;
         this.cancelEdit();
       },
       error: () => {
-        this.errorMessage = 'Unable to rename watermark. Please try again.';
+        this.errorMessage = $localize`Failed to rename watermark. Please try again.`;
       }
     });
   }
 
   deleteWatermark(watermark: WatermarkItem) {
-    const confirmed = globalThis.confirm(`Delete watermark "${watermark.label}"?`);
+    const confirmed = globalThis.confirm(
+      $localize`Delete watermark "${watermark.label}:watermarkLabel:"?`
+    );
     if (!confirmed) {
       return;
     }
@@ -97,10 +99,10 @@ export class WatermarkUploadComponent {
         if (this.editingWatermarkId === watermark.id) {
           this.cancelEdit();
         }
-        this.successMessage = 'Watermark deleted successfully.';
+        this.successMessage = $localize`Watermark deleted successfully.`;
       },
       error: () => {
-        this.errorMessage = 'Unable to delete watermark. Please try again.';
+        this.errorMessage = $localize`Failed to delete watermark. Please try again.`;
       }
     });
   }
@@ -112,7 +114,7 @@ export class WatermarkUploadComponent {
       },
       error: () => {
         this.watermarks = [];
-        this.errorMessage = 'Unable to load watermarks.';
+        this.errorMessage = $localize`Failed to load watermarks.`;
       }
     });
   }

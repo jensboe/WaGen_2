@@ -49,7 +49,7 @@ export class ImageUploadEditComponent {
 
   handleSave(event: SaveEditedImageEvent) {
     if (!this.selectedFile) {
-      this.errorMessage = 'No image selected for upload.';
+      this.errorMessage = $localize`No image selected for upload.`;
       return;
     }
 
@@ -63,18 +63,18 @@ export class ImageUploadEditComponent {
         this.imageService.saveFinalImage(result.id, finalFile, event.metadata).subscribe({
           next: () => {
             this.uploading = false;
-            this.successMessage = 'Image uploaded and saved successfully.';
+            this.successMessage = $localize`Image was successfully uploaded and saved.`;
             this.router.navigate(['/images']);
           },
           error: () => {
             this.uploading = false;
-            this.errorMessage = 'Final save failed. Please try again.';
+            this.errorMessage = $localize`The final save failed. Please try again.`;
           }
         });
       },
       error: () => {
         this.uploading = false;
-        this.errorMessage = 'Upload failed. Please try again.';
+        this.errorMessage = $localize`The upload failed. Please try again.`;
       }
     });
   }
