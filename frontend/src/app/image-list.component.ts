@@ -8,11 +8,10 @@ import { MatCardModule } from '@angular/material/card';
 import { ImageService, ImageItem } from './image.service';
 
 @Component({
-  selector: 'app-image-list',
-  standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, MatButtonModule, MatButtonToggleModule, MatCardModule],
-  templateUrl: './image-list.component.html',
-  styleUrl: './image-list.component.scss'
+    selector: 'app-image-list',
+    imports: [CommonModule, FormsModule, RouterLink, MatButtonModule, MatButtonToggleModule, MatCardModule],
+    templateUrl: './image-list.component.html',
+    styleUrl: './image-list.component.scss'
 })
 export class ImageListComponent implements OnInit {
   images: ImageItem[] = [];

@@ -8,11 +8,10 @@ import { ImageService } from './image.service';
 import type { SaveEditedImageEvent } from '@shared/image.types';
 
 @Component({
-  selector: 'app-image-upload-edit',
-  standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, ImageEditorComponent, MatTabsModule],
-  templateUrl: './image-upload-edit.component.html',
-  styleUrl: './image-upload-edit.component.scss'
+    selector: 'app-image-upload-edit',
+    imports: [CommonModule, FormsModule, RouterLink, ImageEditorComponent, MatTabsModule],
+    templateUrl: './image-upload-edit.component.html',
+    styleUrl: './image-upload-edit.component.scss'
 })
 export class ImageUploadEditComponent {
   selectedFile: File | null = null;
