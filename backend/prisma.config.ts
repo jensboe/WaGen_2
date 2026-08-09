@@ -1,12 +1,13 @@
 import 'dotenv/config';
 import { defineConfig } from 'prisma/config';
-import { PrismaBetterSqlite3 } from '@prisma/adapter-better-sqlite3';
+import { createClient } from '@libsql/client';
+import { PrismaLibSql } from '@prisma/adapter-libsql';
 
 export default defineConfig({
   schema: './prisma/schema.prisma',
   migrate: {
     adapter() {
-      return new PrismaBetterSqlite3({ url: process.env.DATABASE_URL ?? 'file:./prisma/dev.db' });
+      return new PrismaLibSql(createClient({ url: process.env.DATABASE_URL ?? 'file:./prisma/dev.db' }));
     },
   },
 });
