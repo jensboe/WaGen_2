@@ -1,5 +1,5 @@
-import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -8,11 +8,11 @@ import { MatInputModule } from '@angular/material/input';
 import { ImageService, WatermarkItem } from './image.service';
 
 @Component({
-  selector: 'app-watermark-upload',
-  standalone: true,
-  imports: [CommonModule, FormsModule, MatButtonModule, MatCardModule, MatFormFieldModule, MatInputModule],
-  templateUrl: './watermark-upload.component.html',
-  styleUrl: './watermark-upload.component.scss'
+    selector: 'app-watermark-upload',
+    imports: [FormsModule, MatButtonModule, MatCardModule, MatFormFieldModule, MatInputModule],
+    templateUrl: './watermark-upload.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
+    styleUrl: './watermark-upload.component.scss'
 })
 export class WatermarkUploadComponent {
   watermarks: WatermarkItem[] = [];

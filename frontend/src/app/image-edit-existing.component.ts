@@ -1,16 +1,16 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { CommonModule } from '@angular/common';
+
 import { ImageEditorComponent } from './image-editor.component';
 import { ImageService, ImageItem } from './image.service';
 import type { SaveEditedImageEvent } from '@shared/image.types';
 
 @Component({
-  selector: 'app-image-edit-existing',
-  standalone: true,
-  imports: [CommonModule, ImageEditorComponent],
-  templateUrl: './image-edit-existing.component.html',
-  styleUrl: './image-edit-existing.component.scss'
+    selector: 'app-image-edit-existing',
+    imports: [ImageEditorComponent],
+    templateUrl: './image-edit-existing.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
+    styleUrl: './image-edit-existing.component.scss'
 })
 export class ImageEditExistingComponent implements OnInit {
   image: ImageItem | null = null;

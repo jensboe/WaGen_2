@@ -2,27 +2,19 @@
 
 @include mat.core();
 
-$wagen-primary: mat.define-palette(mat.$indigo-palette, 500);
-$wagen-accent: mat.define-palette(mat.$pink-palette, A200, A100, A400);
-$wagen-warn: mat.define-palette(mat.$red-palette);
-
-$wagen-theme: mat.define-light-theme((
+$wagen-theme: mat.define-theme((
   color: (
-    primary: $wagen-primary,
-    accent: $wagen-accent,
-    warn: $wagen-warn,
+    theme-type: light,
+  ),
+  density: (
+    scale: 0,
   ),
 ));
 
-@include mat.button-theme($wagen-theme);
-@include mat.button-toggle-theme($wagen-theme);
-@include mat.toolbar-theme($wagen-theme);
-@include mat.card-theme($wagen-theme);
-@include mat.form-field-theme($wagen-theme);
-@include mat.input-theme($wagen-theme);
-@include mat.select-theme($wagen-theme);
-@include mat.slider-theme($wagen-theme);
-@include mat.tabs-theme($wagen-theme);
+@include mat.all-component-themes($wagen-theme);
+@include mat.elevation-classes();
+@include mat.app-background();
+
 
 body {
   margin: 0;

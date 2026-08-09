@@ -1,5 +1,5 @@
-import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges, ViewChild, inject } from '@angular/core';
+
+import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges, ViewChild, inject, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -30,11 +30,11 @@ type PreviewMetrics = { scale: number; width: number; height: number };
 type CropBounds = { x: number; y: number; width: number; height: number };
 
 @Component({
-  selector: 'app-image-editor',
-  standalone: true,
-  imports: [CommonModule, FormsModule, MatButtonModule, MatCardModule, MatFormFieldModule, MatInputModule, MatSelectModule, MatSliderModule, MatTabsModule],
-  templateUrl: './image-editor.component.html',
-  styleUrl: './image-editor.component.scss'
+    selector: 'app-image-editor',
+    imports: [FormsModule, MatButtonModule, MatCardModule, MatFormFieldModule, MatInputModule, MatSelectModule, MatSliderModule, MatTabsModule],
+    templateUrl: './image-editor.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
+    styleUrl: './image-editor.component.scss'
 })
 export class ImageEditorComponent implements OnChanges, OnInit, AfterViewInit, OnDestroy {
   @Input() sourceFile?: File;

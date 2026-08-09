@@ -1,6 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { CommonModule } from '@angular/common';
+
 import { FormsModule } from '@angular/forms';
 import { MatTabsModule } from '@angular/material/tabs';
 import { ImageEditorComponent } from './image-editor.component';
@@ -8,11 +8,11 @@ import { ImageService } from './image.service';
 import type { SaveEditedImageEvent } from '@shared/image.types';
 
 @Component({
-  selector: 'app-image-upload-edit',
-  standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, ImageEditorComponent, MatTabsModule],
-  templateUrl: './image-upload-edit.component.html',
-  styleUrl: './image-upload-edit.component.scss'
+    selector: 'app-image-upload-edit',
+    imports: [FormsModule, RouterLink, ImageEditorComponent, MatTabsModule],
+    templateUrl: './image-upload-edit.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
+    styleUrl: './image-upload-edit.component.scss'
 })
 export class ImageUploadEditComponent {
   selectedFile: File | null = null;

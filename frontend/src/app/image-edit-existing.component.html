@@ -4,21 +4,24 @@
     <p i18n>Crop the image, blur sensitive areas, and place a watermark on an already uploaded image.</p>
   </header>
 
-  <ng-container *ngIf="image; else noImage">
-    <app-image-editor
-      *ngIf="image.originalUrl"
-      [sourceUrl]="image.originalUrl"
-      [initialMetadata]="image.metadata"
-      (save)="handleSave($event)">
-    </app-image-editor>
-
-    <div *ngIf="errorMessage" class="error">{{ errorMessage }}</div>
-    <div *ngIf="successMessage" class="success">{{ successMessage }}</div>
-  </ng-container>
-
-  <ng-template #noImage>
+  @if (image) {
+    @if (image.originalUrl) {
+      <app-image-editor
+        [sourceUrl]="image.originalUrl"
+        [initialMetadata]="image.metadata"
+        (save)="handleSave($event)">
+      </app-image-editor>
+    }
+    @if (errorMessage) {
+      <div class="error">{{ errorMessage }}</div>
+    }
+    @if (successMessage) {
+      <div class="success">{{ successMessage }}</div>
+    }
+  } @else {
     <div class="placeholder">
       <p i18n>No image selected. Please choose an image from the image list.</p>
     </div>
-  </ng-template>
+  }
+
 </section>

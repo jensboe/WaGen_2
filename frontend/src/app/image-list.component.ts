@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -8,11 +8,11 @@ import { MatCardModule } from '@angular/material/card';
 import { ImageService, ImageItem } from './image.service';
 
 @Component({
-  selector: 'app-image-list',
-  standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, MatButtonModule, MatButtonToggleModule, MatCardModule],
-  templateUrl: './image-list.component.html',
-  styleUrl: './image-list.component.scss'
+    selector: 'app-image-list',
+    imports: [FormsModule, RouterLink, MatButtonModule, MatButtonToggleModule, MatCardModule],
+    templateUrl: './image-list.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
+    styleUrl: './image-list.component.scss'
 })
 export class ImageListComponent implements OnInit {
   images: ImageItem[] = [];

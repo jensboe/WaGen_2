@@ -16,27 +16,37 @@
     </mat-tab>
   </mat-tab-group>
 
-  <div class="file-selection" *ngIf="selectedTabIndex === 0">
-    <label class="file-picker">
-      <span i18n>Select image</span>
-      <input type="file" accept="image/*" (change)="onFileSelected($event)" />
-    </label>
-  </div>
+  @if (selectedTabIndex === 0) {
+    <div class="file-selection">
+      <label class="file-picker">
+        <span i18n>Select image</span>
+        <input type="file" accept="image/*" (change)="onFileSelected($event)" />
+      </label>
+    </div>
+  }
 
-  <div *ngIf="selectedFile && selectedTabIndex > 0">
-    <app-image-editor
-      [sourceFile]="selectedFile"
-      [showStepTabs]="false"
-      [externalStep]="selectedTabIndex === 1 ? 'crop' : 'redact'"
-      (save)="handleSave($event)">
-    </app-image-editor>
-  </div>
+  @if (selectedFile && selectedTabIndex > 0) {
+    <div>
+      <app-image-editor
+        [sourceFile]="selectedFile"
+        [showStepTabs]="false"
+        [externalStep]="selectedTabIndex === 1 ? 'crop' : 'redact'"
+        (save)="handleSave($event)">
+      </app-image-editor>
+    </div>
+  }
 
-  <p *ngIf="errorMessage" class="error">{{ errorMessage }}</p>
-  <p *ngIf="successMessage" class="success">{{ successMessage }}</p>
+  @if (errorMessage) {
+    <p class="error">{{ errorMessage }}</p>
+  }
+  @if (successMessage) {
+    <p class="success">{{ successMessage }}</p>
+  }
 
-  <div class="actions" *ngIf="selectedFile">
-    <button type="button" (click)="resetSelection()" i18n>Choose another image</button>
-    <a routerLink="/images" i18n>Cancel</a>
-  </div>
+  @if (selectedFile) {
+    <div class="actions">
+      <button type="button" (click)="resetSelection()" i18n>Choose another image</button>
+      <a routerLink="/images" i18n>Cancel</a>
+    </div>
+  }
 </section>
