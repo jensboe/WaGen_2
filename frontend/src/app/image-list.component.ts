@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -11,6 +11,7 @@ import { ImageService, ImageItem } from './image.service';
     selector: 'app-image-list',
     imports: [FormsModule, RouterLink, MatButtonModule, MatButtonToggleModule, MatCardModule],
     templateUrl: './image-list.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
     styleUrl: './image-list.component.scss'
 })
 export class ImageListComponent implements OnInit {

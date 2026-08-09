@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
 import { ImageEditorComponent } from './image-editor.component';
@@ -9,6 +9,7 @@ import type { SaveEditedImageEvent } from '@shared/image.types';
     selector: 'app-image-edit-existing',
     imports: [ImageEditorComponent],
     templateUrl: './image-edit-existing.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
     styleUrl: './image-edit-existing.component.scss'
 })
 export class ImageEditExistingComponent implements OnInit {

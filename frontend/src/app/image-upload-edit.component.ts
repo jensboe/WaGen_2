@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 
 import { FormsModule } from '@angular/forms';
@@ -11,6 +11,7 @@ import type { SaveEditedImageEvent } from '@shared/image.types';
     selector: 'app-image-upload-edit',
     imports: [FormsModule, RouterLink, ImageEditorComponent, MatTabsModule],
     templateUrl: './image-upload-edit.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
     styleUrl: './image-upload-edit.component.scss'
 })
 export class ImageUploadEditComponent {
