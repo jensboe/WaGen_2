@@ -5,7 +5,7 @@ import path from 'path';
 import fs from 'fs';
 import { ImageRedaction, Prisma, PrismaClient, Watermark } from '@prisma/client';
 import { PrismaBetterSqlite3 } from "@prisma/adapter-better-sqlite3";
-import { PORT, UPLOAD_DIR, DATABASE_URL } from './config';
+import { PORT, UPLOAD_DIR, DATABASE_URL, CORS_ORIGIN } from './config';
 import type { AspectRatio, BrushRedaction, ImageEditMetadata, ImageResponse, RectangleRedaction, Redaction, WatermarkPosition, WatermarkResponse } from '@shared/image.types';
 
 type MulterRequest = Request & { file?: Express.Multer.File };
@@ -23,7 +23,7 @@ const adapter = new PrismaBetterSqlite3({ url: DATABASE_URL });
 const prisma = new PrismaClient({ adapter });
 
 const app = express();
-app.use(cors());
+app.use(cors({ origin: CORS_ORIGIN }));
 app.use(express.json());
 
 // Ensure upload directories exist

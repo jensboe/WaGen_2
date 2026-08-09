@@ -2,11 +2,12 @@ import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import type { ImageEditMetadata, ImageResponse, WatermarkResponse } from '@shared/image.types';
+import { environment } from '../environments/environment';
 
 export type ImageItem = ImageResponse;
 export type WatermarkItem = WatermarkResponse;
 
-const API_BASE = 'http://localhost:3000';
+const API_BASE = environment.apiBase;
 
 @Injectable({ providedIn: 'root' })
 export class ImageService {
