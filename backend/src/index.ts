@@ -4,7 +4,8 @@ import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
 import { ImageRedaction, Prisma, PrismaClient, Watermark } from '@prisma/client';
-import { PORT, UPLOAD_DIR } from './config';
+import { PrismaBetterSqlite3 } from "@prisma/adapter-better-sqlite3";
+import { PORT, UPLOAD_DIR, DATABASE_URL } from './config';
 import type { AspectRatio, BrushRedaction, ImageEditMetadata, ImageResponse, RectangleRedaction, Redaction, WatermarkPosition, WatermarkResponse } from '@shared/image.types';
 
 type MulterRequest = Request & { file?: Express.Multer.File };
@@ -17,7 +18,10 @@ type ImageWithRelations = Prisma.ImageGetPayload<{
   };
 }>;
 
-const prisma = new PrismaClient();
+
+const adapter = new PrismaBetterSqlite3({ url: DATABASE_URL });
+const prisma = new PrismaClient({ adapter });
+
 const app = express();
 app.use(cors());
 app.use(express.json());
