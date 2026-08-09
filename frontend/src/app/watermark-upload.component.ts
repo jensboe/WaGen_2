@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -9,7 +9,7 @@ import { ImageService, WatermarkItem } from './image.service';
 
 @Component({
     selector: 'app-watermark-upload',
-    imports: [CommonModule, FormsModule, MatButtonModule, MatCardModule, MatFormFieldModule, MatInputModule],
+    imports: [FormsModule, MatButtonModule, MatCardModule, MatFormFieldModule, MatInputModule],
     templateUrl: './watermark-upload.component.html',
     styleUrl: './watermark-upload.component.scss'
 })

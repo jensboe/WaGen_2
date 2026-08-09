@@ -6,89 +6,101 @@
     </mat-card-header>
 
     <mat-card-content>
-      <mat-tab-group *ngIf="showStepTabs" [selectedIndex]="getCurrentStepTabIndex()" (selectedIndexChange)="onStepTabChange($event)">
-        <mat-tab>
-          <ng-template mat-tab-label i18n>Crop</ng-template>
-        </mat-tab>
-        <mat-tab [disabled]="!loadedImage">
-          <ng-template mat-tab-label i18n>Blur Areas</ng-template>
-        </mat-tab>
-      </mat-tab-group>
+      @if (showStepTabs) {
+        <mat-tab-group [selectedIndex]="getCurrentStepTabIndex()" (selectedIndexChange)="onStepTabChange($event)">
+          <mat-tab>
+            <ng-template mat-tab-label i18n>Crop</ng-template>
+          </mat-tab>
+          <mat-tab [disabled]="!loadedImage">
+            <ng-template mat-tab-label i18n>Blur Areas</ng-template>
+          </mat-tab>
+        </mat-tab-group>
+      }
 
       <div class="canvas-container">
         <canvas #editorCanvas class="editor-canvas"></canvas>
       </div>
 
-      <div class="editor-controls" *ngIf="currentStep === 'crop'">
-        <div class="control-hint" i18n>Drag the crop frame directly on the image and adjust it. The blur step only uses the cropped image area.</div>
-
-        <mat-form-field appearance="fill" class="full-width">
-          <mat-label i18n>Aspect Ratio</mat-label>
-          <mat-select [(ngModel)]="aspectRatio" (selectionChange)="onAspectRatioChange($event.value)">
-            <mat-option value="free" i18n>Free</mat-option>
-            <mat-option value="1:1">1:1</mat-option>
-            <mat-option value="16:9">16:9</mat-option>
-            <mat-option value="4:3">4:3</mat-option>
-          </mat-select>
-        </mat-form-field>
-
-        <div class="control-row">
+      @if (currentStep === 'crop') {
+        <div class="editor-controls">
+          <div class="control-hint" i18n>Drag the crop frame directly on the image and adjust it. The blur step only uses the cropped image area.</div>
           <mat-form-field appearance="fill" class="full-width">
-            <mat-label i18n>Watermark</mat-label>
-            <mat-select [(ngModel)]="selectedWatermarkId" (selectionChange)="onWatermarkChange($event.value)">
-              <mat-option [value]="null" i18n>No Watermark</mat-option>
-              <mat-option *ngFor="let option of watermarkOptions" [value]="option.id">{{ option.label }}</mat-option>
+            <mat-label i18n>Aspect Ratio</mat-label>
+            <mat-select [(ngModel)]="aspectRatio" (selectionChange)="onAspectRatioChange($event.value)">
+              <mat-option value="free" i18n>Free</mat-option>
+              <mat-option value="1:1">1:1</mat-option>
+              <mat-option value="16:9">16:9</mat-option>
+              <mat-option value="4:3">4:3</mat-option>
             </mat-select>
           </mat-form-field>
-
-          <mat-form-field appearance="fill" class="full-width">
-            <mat-label i18n>Watermark Position</mat-label>
-            <mat-select [(ngModel)]="watermarkPosition" (selectionChange)="drawCanvas()">
-              <mat-option value="top-left" i18n>Top Left</mat-option>
-              <mat-option value="top-right" i18n>Top Right</mat-option>
-              <mat-option value="bottom-left" i18n>Bottom Left</mat-option>
-              <mat-option value="bottom-right" i18n>Bottom Right</mat-option>
-            </mat-select>
-          </mat-form-field>
-        </div>
-      </div>
-
-      <div class="editor-controls" *ngIf="currentStep === 'redact'">
-        <div class="control-hint" i18n>Only the cropped image area is shown here. Add blur with a movable rectangle or paint it with the brush.</div>
-
-        <div class="tool-row">
-          <button mat-stroked-button type="button" [color]="redactionTool === 'rectangle' ? 'primary' : undefined" (click)="setRedactionTool('rectangle')" i18n>Rectangle</button>
-          <button mat-stroked-button type="button" [color]="redactionTool === 'brush' ? 'primary' : undefined" (click)="setRedactionTool('brush')" i18n>Brush</button>
-          <button mat-button type="button" (click)="removeSelectedRectangle()" [disabled]="!selectedRectangle" i18n>Remove Rectangle</button>
-          <button mat-button type="button" (click)="undoLastBrushStroke()" [disabled]="!hasBrushRedaction()" i18n>Undo Brush</button>
-          <button mat-button type="button" (click)="clearRedactions()" [disabled]="redactions.length === 0" i18n>Clear All</button>
-        </div>
-
-        <div class="control-hint" *ngIf="redactionTool === 'rectangle'" i18n>Drag to create the rectangle. Adjust it via the corner points and rotate it using the round handle above.</div>
-
-        <div class="control-row" *ngIf="redactionTool === 'brush'">
-          <div class="slider-field">
-            <label for="brush-size-slider" i18n>Brush Size: {{ brushSize }}</label>
-            <mat-slider min="4" max="160" step="1" discrete class="full-width">
-              <input
-                id="brush-size-slider"
-                matSliderThumb
-                [ngModel]="brushSize"
-                (ngModelChange)="onBrushSizeChange($event)" />
-            </mat-slider>
+          <div class="control-row">
+            <mat-form-field appearance="fill" class="full-width">
+              <mat-label i18n>Watermark</mat-label>
+              <mat-select [(ngModel)]="selectedWatermarkId" (selectionChange)="onWatermarkChange($event.value)">
+                <mat-option [value]="null" i18n>No Watermark</mat-option>
+                @for (option of watermarkOptions; track option) {
+                  <mat-option [value]="option.id">{{ option.label }}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+            <mat-form-field appearance="fill" class="full-width">
+              <mat-label i18n>Watermark Position</mat-label>
+              <mat-select [(ngModel)]="watermarkPosition" (selectionChange)="drawCanvas()">
+                <mat-option value="top-left" i18n>Top Left</mat-option>
+                <mat-option value="top-right" i18n>Top Right</mat-option>
+                <mat-option value="bottom-left" i18n>Bottom Left</mat-option>
+                <mat-option value="bottom-right" i18n>Bottom Right</mat-option>
+              </mat-select>
+            </mat-form-field>
           </div>
         </div>
-      </div>
-    </mat-card-content>
+      }
 
-    <mat-card-actions>
-      <button mat-flat-button color="primary" (click)="saveFinal()" [disabled]="!loadedImage || saving" i18n>Save image</button>
-      <button *ngIf="currentStep === 'crop'" mat-button type="button" (click)="resetCrop()" [disabled]="!loadedImage || saving" i18n>Reset Crop</button>
-    </mat-card-actions>
+      @if (currentStep === 'redact') {
+        <div class="editor-controls">
+          <div class="control-hint" i18n>Only the cropped image area is shown here. Add blur with a movable rectangle or paint it with the brush.</div>
+          <div class="tool-row">
+            <button mat-stroked-button type="button" [color]="redactionTool === 'rectangle' ? 'primary' : undefined" (click)="setRedactionTool('rectangle')" i18n>Rectangle</button>
+            <button mat-stroked-button type="button" [color]="redactionTool === 'brush' ? 'primary' : undefined" (click)="setRedactionTool('brush')" i18n>Brush</button>
+            <button mat-button type="button" (click)="removeSelectedRectangle()" [disabled]="!selectedRectangle" i18n>Remove Rectangle</button>
+            <button mat-button type="button" (click)="undoLastBrushStroke()" [disabled]="!hasBrushRedaction()" i18n>Undo Brush</button>
+            <button mat-button type="button" (click)="clearRedactions()" [disabled]="redactions.length === 0" i18n>Clear All</button>
+          </div>
+          @if (redactionTool === 'rectangle') {
+            <div class="control-hint" i18n>Drag to create the rectangle. Adjust it via the corner points and rotate it using the round handle above.</div>
+          }
+          @if (redactionTool === 'brush') {
+            <div class="control-row">
+              <div class="slider-field">
+                <label for="brush-size-slider" i18n>Brush Size: {{ brushSize }}</label>
+                <mat-slider min="4" max="160" step="1" discrete class="full-width">
+                  <input
+                    id="brush-size-slider"
+                    matSliderThumb
+                    [ngModel]="brushSize"
+                    (ngModelChange)="onBrushSizeChange($event)" />
+                  </mat-slider>
+                </div>
+              </div>
+            }
+          </div>
+        }
+      </mat-card-content>
 
-    <mat-card-footer>
-      <p *ngIf="errorMessage" class="error-message">{{ errorMessage }}</p>
-      <p *ngIf="successMessage" class="success-message">{{ successMessage }}</p>
-    </mat-card-footer>
-  </mat-card>
-</section>
+      <mat-card-actions>
+        <button mat-flat-button color="primary" (click)="saveFinal()" [disabled]="!loadedImage || saving" i18n>Save image</button>
+        @if (currentStep === 'crop') {
+          <button mat-button type="button" (click)="resetCrop()" [disabled]="!loadedImage || saving" i18n>Reset Crop</button>
+        }
+      </mat-card-actions>
+
+      <mat-card-footer>
+        @if (errorMessage) {
+          <p class="error-message">{{ errorMessage }}</p>
+        }
+        @if (successMessage) {
+          <p class="success-message">{{ successMessage }}</p>
+        }
+      </mat-card-footer>
+    </mat-card>
+  </section>

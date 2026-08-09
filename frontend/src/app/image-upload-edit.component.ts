@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { CommonModule } from '@angular/common';
+
 import { FormsModule } from '@angular/forms';
 import { MatTabsModule } from '@angular/material/tabs';
 import { ImageEditorComponent } from './image-editor.component';
@@ -9,7 +9,7 @@ import type { SaveEditedImageEvent } from '@shared/image.types';
 
 @Component({
     selector: 'app-image-upload-edit',
-    imports: [CommonModule, FormsModule, RouterLink, ImageEditorComponent, MatTabsModule],
+    imports: [FormsModule, RouterLink, ImageEditorComponent, MatTabsModule],
     templateUrl: './image-upload-edit.component.html',
     styleUrl: './image-upload-edit.component.scss'
 })
