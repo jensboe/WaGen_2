@@ -16,7 +16,8 @@
   border-radius: 0;
   min-height: 56px;
   padding: 0 0.75rem;
-}
+  background-color: var(--mat-sys-primary) !important;
+  color: var(--mat-sys-on-primary) !important;}
 
 .logo {
   display: flex;
@@ -30,7 +31,8 @@
 }
 
 .subtitle {
-  color: rgba(255, 255, 255, 0.8);
+  color: inherit;
+  opacity: 0.8;
   font-size: 0.8rem;
 }
 

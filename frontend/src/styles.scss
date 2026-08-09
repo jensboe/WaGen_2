@@ -1,5 +1,17 @@
 @use '@angular/material' as mat;
 
+@include mat.core();
+
+$wagen-theme: mat.define-theme((
+  color: (
+    theme-type: light,
+  ),
+  density: (
+    scale: 0,
+  ),
+));
+
+@include mat.all-component-themes($wagen-theme);
 @include mat.elevation-classes();
 @include mat.app-background();
 

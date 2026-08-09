@@ -1,12 +1,12 @@
 .editor-shell { padding: 0; }
 .canvas-container { display: flex; justify-content: center; margin-bottom: 0.75rem; }
-.editor-canvas { max-width: 100%; width: 100%; border: 1px solid #d1d5db; border-radius: 0; background: white; touch-action: none; }
+.editor-canvas { max-width: 100%; width: 100%; border: 1px solid var(--mat-sys-outline-variant); border-radius: 0; background: var(--mat-sys-surface); touch-action: none; }
 .editor-controls { display: grid; gap: 0.75rem; }
 .control-row { display: grid; gap: 0.5rem; grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .tool-row { display: flex; flex-wrap: wrap; gap: 0.5rem; }
-.control-hint { color: #475569; }
+.control-hint { color: var(--mat-sys-on-surface-variant); }
 .slider-field { display: grid; gap: 0.35rem; align-items: center; }
-.slider-field label { font-weight: 600; color: #334155; }
+.slider-field label { font-weight: 600; color: var(--mat-sys-on-surface); }
 .full-width { width: 100%; }
-.error-message { color: #b91c1c; margin: 0; }
-.success-message { color: #047857; margin: 0; }
+.error-message { color: var(--mat-sys-error); margin: 0; }
+.success-message { color: var(--mat-sys-tertiary); margin: 0; }

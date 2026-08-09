@@ -2,7 +2,7 @@
 header { margin-bottom: 0.75rem; }
 h2 { margin: 0 0 0.25rem; font-size: 1.5rem; }
 p { margin: 0; color: #555; }
-.gallery-toolbar { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem; color: #334155; }
+.gallery-toolbar { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;}
 .image-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 0.75rem; }
 .image-card { overflow: hidden; }
 .image-preview { min-height: 140px; overflow: hidden; background: #f8fafc; display: flex; align-items: center; justify-content: center; padding: 0; }
