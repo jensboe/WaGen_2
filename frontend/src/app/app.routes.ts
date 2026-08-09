@@ -1,15 +1,11 @@
 import { Routes } from '@angular/router';
-import { ImageListComponent } from './image-list.component';
-import { ImageUploadEditComponent } from './image-upload-edit.component';
-import { ImageEditExistingComponent } from './image-edit-existing.component';
-import { WatermarkUploadComponent } from './watermark-upload.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'images', pathMatch: 'full' },
-  { path: 'images', component: ImageListComponent },
-  { path: 'images/new', component: ImageUploadEditComponent },
-  { path: 'upload', component: ImageUploadEditComponent },
-  { path: 'watermarks', component: WatermarkUploadComponent },
-  { path: 'images/:id/edit', component: ImageEditExistingComponent },
+  { path: 'images', loadComponent: () => import('./image-list.component').then((m) => m.ImageListComponent) },
+  { path: 'images/new', loadComponent: () => import('./image-upload-edit.component').then((m) => m.ImageUploadEditComponent) },
+  { path: 'upload', loadComponent: () => import('./image-upload-edit.component').then((m) => m.ImageUploadEditComponent) },
+  { path: 'watermarks', loadComponent: () => import('./watermark-upload.component').then((m) => m.WatermarkUploadComponent) },
+  { path: 'images/:id/edit', loadComponent: () => import('./image-edit-existing.component').then((m) => m.ImageEditExistingComponent) },
   { path: '**', redirectTo: 'images' }
 ];
