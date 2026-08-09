@@ -4,7 +4,6 @@ import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
 import { ImageRedaction, Prisma, PrismaClient, Watermark } from '@prisma/client';
-import { createClient } from '@libsql/client';
 import { PrismaLibSql } from '@prisma/adapter-libsql';
 import { PORT, UPLOAD_DIR, DATABASE_URL, CORS_ORIGIN } from './config';
 import type { AspectRatio, BrushRedaction, ImageEditMetadata, ImageResponse, RectangleRedaction, Redaction, WatermarkPosition, WatermarkResponse } from '@shared/image.types';
@@ -20,7 +19,7 @@ type ImageWithRelations = Prisma.ImageGetPayload<{
 }>;
 
 
-const adapter = new PrismaLibSql(createClient({ url: DATABASE_URL }));
+const adapter = new PrismaLibSql({ url: DATABASE_URL });
 const prisma = new PrismaClient({ adapter });
 
 const app = express();
