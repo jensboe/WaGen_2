@@ -1,6 +1,5 @@
-import dotenv from 'dotenv';
-dotenv.config();
+import path from 'path';
 
-export const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
-export const UPLOAD_DIR = process.env.UPLOAD_DIR || './data';
-export const DATABASE_URL = process.env.DATABASE_URL || '';
+export const UPLOAD_DIR = path.join(__dirname, '..', 'data');
+export const PORT = 3000;
+export const DATABASE_URL = 'file:./prisma/dev.db';
