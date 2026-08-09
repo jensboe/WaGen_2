@@ -23,6 +23,7 @@ const adapter = new PrismaLibSql({ url: DATABASE_URL });
 const prisma = new PrismaClient({ adapter });
 
 const app = express();
+const api = express.Router();
 app.use(cors({ origin: CORS_ORIGIN }));
 app.use(express.json());
 
@@ -45,10 +46,10 @@ const originalUpload = multer({ storage: createStorage('originals') });
 const finalUpload = multer({ storage: createStorage('finals') });
 const watermarkUpload = multer({ storage: createStorage('watermarks') });
 
-app.get('/health', (_req, res) => res.json({ status: 'ok' }));
+api.get('/health', (_req, res) => res.json({ status: 'ok' }));
 
 // Upload original image
-app.post('/upload-original', originalUpload.single('image'), async (req: MulterRequest, res) => {
+api.post('/upload-original', originalUpload.single('image'), async (req: MulterRequest, res) => {
   if (!req.file) return res.status(400).json({ error: 'No file' });
   const originalPath = req.file.path;
   const img = await prisma.image.create({
@@ -58,7 +59,7 @@ app.post('/upload-original', originalUpload.single('image'), async (req: MulterR
 });
 
 // Save final image and metadata
-app.post('/save-final', finalUpload.single('final'), async (req: MulterRequest, res) => {
+api.post('/save-final', finalUpload.single('final'), async (req: MulterRequest, res) => {
   const metadata = parseMetadata(req.body.metadata);
   const imageId = parseInt(req.body.id as string, 10);
   if (Number.isNaN(imageId)) {
@@ -75,12 +76,12 @@ app.post('/save-final', finalUpload.single('final'), async (req: MulterRequest, 
   res.json({ id: updated.id });
 });
 
-app.get('/watermarks', async (req, res) => {
+api.get('/watermarks', async (req, res) => {
   const watermarks = await prisma.watermark.findMany({ orderBy: { createdAt: 'desc' } });
   res.json(watermarks.map((watermark) => buildWatermarkResponse(req, watermark)));
 });
 
-app.post('/watermarks', watermarkUpload.single('watermark'), async (req: MulterRequest, res) => {
+api.post('/watermarks', watermarkUpload.single('watermark'), async (req: MulterRequest, res) => {
   if (!req.file) {
     return res.status(400).json({ error: 'No watermark file provided' });
   }
@@ -95,7 +96,7 @@ app.post('/watermarks', watermarkUpload.single('watermark'), async (req: MulterR
   res.status(201).json(buildWatermarkResponse(req, watermark));
 });
 
-app.patch('/watermarks/:id', async (req, res) => {
+api.patch('/watermarks/:id', async (req, res) => {
   const id = parseInt(req.params.id, 10);
   const label = typeof req.body.label === 'string' ? req.body.label.trim() : '';
 
@@ -114,7 +115,7 @@ app.patch('/watermarks/:id', async (req, res) => {
   res.json(buildWatermarkResponse(req, watermark));
 });
 
-app.delete('/watermarks/:id', async (req, res) => {
+api.delete('/watermarks/:id', async (req, res) => {
   const id = parseInt(req.params.id, 10);
   if (Number.isNaN(id)) {
     return res.status(400).json({ error: 'Invalid watermark id' });
@@ -147,7 +148,7 @@ app.delete('/watermarks/:id', async (req, res) => {
 // Get image metadata
 function publicUrl(filePath: string) {
   const relativePath = path.relative(UPLOAD_DIR, filePath).split(path.sep).join('/');
-  return `/static/${encodeURI(relativePath)}`;
+  return `/api/static/${encodeURI(relativePath)}`;
 }
 
 function publicUrlFromRequest(req: express.Request, filePath: string) {
@@ -156,7 +157,7 @@ function publicUrlFromRequest(req: express.Request, filePath: string) {
   return url;
 }
 
-app.get('/images', async (req, res) => {
+api.get('/images', async (req, res) => {
   const images = await prisma.image.findMany({
     include: {
       watermark: true,
@@ -170,7 +171,7 @@ app.get('/images', async (req, res) => {
   res.json(images.map((image) => buildImageResponse(req, image)));
 });
 
-app.get('/images/:id', async (req, res) => {
+api.get('/images/:id', async (req, res) => {
   const id = parseInt(req.params.id, 10);
   const img = await prisma.image.findUnique({
     where: { id },
@@ -186,7 +187,9 @@ app.get('/images/:id', async (req, res) => {
   res.json(buildImageResponse(req, img));
 });
 
-app.use('/static', express.static(UPLOAD_DIR));
+api.use('/static', express.static(UPLOAD_DIR));
+
+app.use('/api', api);
 
 function parseMetadata(rawMetadata: unknown): ImageEditMetadata | null {
   if (typeof rawMetadata !== 'string' || rawMetadata.trim().length === 0) {
